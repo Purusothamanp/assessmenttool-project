@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
+import { API_BASE_URL } from '@/lib/apiConfig';
 
 interface Assessment {
   id: string;
@@ -47,16 +48,16 @@ export default function EducatorDashboard() {
       setLoading(true);
       
       // Fetch Assessments
-      const aRes = await fetch('http://localhost:3001/assessments');
+      const aRes = await fetch(`${API_BASE_URL}/assessments`);
       const allAssessments = await aRes.json();
       const myAssessments = allAssessments.filter((a: Assessment) => a.creatorId === user?.id);
 
       // Fetch Students
-      const uRes = await fetch('http://localhost:3001/users?role=student');
+      const uRes = await fetch(`${API_BASE_URL}/users?role=student`);
       const students = await uRes.json();
 
       // Fetch Submissions
-      const sRes = await fetch('http://localhost:3001/submissions');
+      const sRes = await fetch(`${API_BASE_URL}/submissions`);
       const allSubmissions = await sRes.json();
       
       // Filter submissions for user's assessments

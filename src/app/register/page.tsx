@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { API_BASE_URL } from '@/lib/apiConfig';
 import { motion } from 'framer-motion';
 import { Mail, Lock, User, UserPlus, Shield, BookOpen, GraduationCap, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -31,7 +32,7 @@ export default function RegisterPage() {
 
     try {
       // 1. Check if user already exists
-      const checkResponse = await fetch(`http://localhost:3001/users?email=${encodeURIComponent(normalizedEmail)}`);
+      const checkResponse = await fetch(`${API_BASE_URL}/users?email=${encodeURIComponent(normalizedEmail)}`);
       const existingUsers = await checkResponse.json();
       
       if (existingUsers && existingUsers.length > 0) {
@@ -41,7 +42,7 @@ export default function RegisterPage() {
       }
 
       // 2. Logic to save to db.json via our backend
-      const response = await fetch('http://localhost:3001/users', {
+      const response = await fetch(`${API_BASE_URL}/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

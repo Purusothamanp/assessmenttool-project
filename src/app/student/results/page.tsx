@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { API_BASE_URL } from '@/lib/apiConfig';
 import { Search, Trophy, XCircle, Clock, Award, CheckSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -23,7 +24,7 @@ export default function StudentResults() {
   const fetchSubmissions = useCallback(async () => {
     try {
       if (!user) return;
-      const response = await fetch(`http://localhost:3001/submissions?studentName=${encodeURIComponent(user.name)}`);
+      const response = await fetch(`${API_BASE_URL}/submissions?studentName=${encodeURIComponent(user.name)}`);
       const data = await response.json();
       setSubmissions(data.reverse());
     } catch (err) {

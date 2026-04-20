@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
+import { API_BASE_URL } from '@/lib/apiConfig';
 
 interface Assessment {
   id: string;
@@ -63,7 +64,7 @@ export default function ManageAssessments() {
 
   const fetchAssessments = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:3001/assessments');
+      const response = await fetch(`${API_BASE_URL}/assessments`);
       const data = await response.json();
       // Filter only assessments created by this educator
       const myData = data.filter((a: Assessment) => a.creatorId === user?.id);
@@ -81,7 +82,7 @@ export default function ManageAssessments() {
     // Fetch students for assign dropdown
     const getStudents = async () => {
       try {
-        const res = await fetch('http://localhost:3001/users?role=student');
+        const res = await fetch(`${API_BASE_URL}/users?role=student`);
         const data = await res.json();
         setStudentsList(data);
       } catch (e) {
@@ -115,13 +116,13 @@ export default function ManageAssessments() {
 
     try {
       if (editingAssessment) {
-        await fetch(`http://localhost:3001/assessments/${editingAssessment.id}`, {
+        await fetch(`${API_BASE_URL}/assessments/${editingAssessment.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...editingAssessment, title, type, category, topic, questionFormats: selectedFormats, questions })
         });
       } else {
-        await fetch('http://localhost:3001/assessments', {
+        await fetch(`${API_BASE_URL}/assessments`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(assessmentData)
@@ -137,7 +138,7 @@ export default function ManageAssessments() {
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this assessment?')) {
       try {
-        await fetch(`http://localhost:3001/assessments/${id}`, { method: 'DELETE' });
+        await fetch(`${API_BASE_URL}/assessments/${id}`, { method: 'DELETE' });
         fetchAssessments();
       } catch (err) {
         console.error('Error deleting assessment:', err);
@@ -392,7 +393,7 @@ export default function ManageAssessments() {
                         : studentsList.filter(s => s.id === selectedAssignee);
                       
                       for (const student of targets) {
-                        await fetch('http://localhost:3001/submissions', {
+                        await fetch(`${API_BASE_URL}/submissions`, {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify({

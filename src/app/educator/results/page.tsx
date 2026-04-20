@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
+import { API_BASE_URL } from '@/lib/apiConfig';
 
 interface Submission {
   id: string;
@@ -59,13 +60,13 @@ export default function StudentResults() {
 
   const fetchResults = useCallback(async () => {
     try {
-      const aRes = await fetch('http://localhost:3001/assessments');
+      const aRes = await fetch(`${API_BASE_URL}/assessments`);
       const allAssessments = await aRes.json();
       const myAssessmentTitles = allAssessments
         .filter((a: Assessment) => a.creatorId === user?.id)
         .map((a: Assessment) => a.title);
 
-      const response = await fetch('http://localhost:3001/submissions');
+      const response = await fetch(`${API_BASE_URL}/submissions`);
       const allSubmissions = await response.json();
       
       const mySubmissions = allSubmissions.filter((s: Submission) => 
@@ -97,7 +98,7 @@ export default function StudentResults() {
     try {
       let response;
       if (submission.assessmentId) {
-        response = await fetch(`http://localhost:3001/assessments/${submission.assessmentId}`);
+        response = await fetch(`${API_BASE_URL}/assessments/${submission.assessmentId}`);
         const data = await response.json();
         if (data) {
           setEvaluatingAssessment(data);
@@ -111,7 +112,7 @@ export default function StudentResults() {
           setManualMarks(initialMarks);
         }
       } else {
-        response = await fetch(`http://localhost:3001/assessments?title=${encodeURIComponent(submission.assessmentTitle)}`);
+        response = await fetch(`${API_BASE_URL}/assessments?title=${encodeURIComponent(submission.assessmentTitle)}`);
         const data = await response.json();
         if (data.length > 0) {
           setEvaluatingAssessment(data[0]);
@@ -134,7 +135,7 @@ export default function StudentResults() {
     setIsSaving(true);
 
     try {
-      await fetch(`http://localhost:3001/submissions/${evaluatingSubmission.id}`, {
+      await fetch(`${API_BASE_URL}/submissions/${evaluatingSubmission.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

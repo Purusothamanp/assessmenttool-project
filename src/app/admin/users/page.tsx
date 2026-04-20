@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '@/lib/apiConfig';
 import { UserRecord } from '@/lib/mockData';
 import { 
   Plus,
@@ -32,7 +33,7 @@ export default function UserManagementPage() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:3001/users');
+      const response = await fetch(`${API_BASE_URL}/users`);
       const data = await response.json();
       setUsers(data.reverse()); // Newest first
     } catch (error) {
@@ -70,7 +71,7 @@ export default function UserManagementPage() {
 
     if (confirm('Are you sure you want to remove this user?')) {
       try {
-        const response = await fetch(`http://localhost:3001/users/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/users/${id}`, {
           method: 'DELETE'
         });
         if (response.ok) {
@@ -89,7 +90,7 @@ export default function UserManagementPage() {
     const updatedUser = { ...user, status: user.status === 'active' ? 'inactive' : 'active' };
 
     try {
-      const response = await fetch(`http://localhost:3001/users/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/users/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedUser)
@@ -126,7 +127,7 @@ export default function UserManagementPage() {
       };
 
       try {
-        const response = await fetch(`http://localhost:3001/users/${editingUser.id}`, {
+        const response = await fetch(`${API_BASE_URL}/users/${editingUser.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedUser)
@@ -153,7 +154,7 @@ export default function UserManagementPage() {
       };
 
       try {
-        const response = await fetch('http://localhost:3001/users', {
+        const response = await fetch(`${API_BASE_URL}/users`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(newUser)
