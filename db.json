@@ -1,0 +1,533 @@
+{
+  "users": [
+    {
+      "id": "t5FlZ_iaC0I",
+      "name": "educator2",
+      "email": "educator2@gmail.com",
+      "role": "educator",
+      "status": "active",
+      "lastLogin": "2026-04-19 20:16",
+      "password": "educator2@2"
+    },
+    {
+      "id": "G7GWnf_NCCA",
+      "name": "admin2",
+      "email": "admin2@gmail.com",
+      "role": "admin",
+      "status": "active",
+      "lastLogin": "2026-04-19 20:14",
+      "password": "admin2@2"
+    },
+    {
+      "id": "wQf3TuhBltU",
+      "name": "admin3",
+      "email": "admin3@gmail.com",
+      "role": "admin",
+      "status": "active",
+      "lastLogin": "2026-04-16T07:08:00Z",
+      "password": "admin3@123"
+    },
+    {
+      "name": "admin0",
+      "email": "admin0@gmail.com",
+      "password": "admin0@",
+      "role": "admin",
+      "status": "active",
+      "lastLogin": "2026-04-18 12:54",
+      "id": "Jvbs66PJpJk"
+    },
+    {
+      "name": "student1",
+      "email": "student1@gmail.com",
+      "password": "student1",
+      "role": "student",
+      "status": "active",
+      "lastLogin": "2026-04-19 20:18",
+      "id": "xFyioXkLilY"
+    },
+    {
+      "name": "admin7",
+      "email": "admin7@gmail.com",
+      "password": "admin7",
+      "role": "admin",
+      "status": "active",
+      "lastLogin": "2026-04-18 21:57",
+      "id": "lNOaeBQL8Rk"
+    },
+    {
+      "name": "student2",
+      "email": "student2@gmail.com",
+      "password": "student2",
+      "role": "student",
+      "status": "active",
+      "lastLogin": "2026-04-19 12:39",
+      "id": "c-nCk7aGpBc"
+    },
+    {
+      "name": "admin1",
+      "email": "admin1@gmail.com",
+      "password": "admin1",
+      "role": "admin",
+      "status": "active",
+      "lastLogin": "2026-04-19 10:46",
+      "id": "agdAl-xxEHw"
+    },
+    {
+      "name": "educator3",
+      "email": "educator3@gmail.com",
+      "password": "educator3",
+      "role": "educator",
+      "status": "active",
+      "lastLogin": "2026-04-19 12:43",
+      "id": "oNCA-Z49JZI"
+    },
+    {
+      "name": "student3",
+      "email": "student3@gmail.com",
+      "password": "student3",
+      "role": "student",
+      "status": "active",
+      "lastLogin": "2026-04-19 12:41",
+      "id": "pNkvHgyDf_g"
+    }
+  ],
+  "reports": [
+    {
+      "title": "int1",
+      "participants": 0,
+      "date": "Apr 18, 2026",
+      "passingRate": 0,
+      "averageScore": 0,
+      "topScore": 0,
+      "id": "o9Gvmurucw0"
+    },
+    {
+      "title": "Admin Auto-Assign Test",
+      "participants": 0,
+      "date": "Apr 18, 2026",
+      "passingRate": 0,
+      "averageScore": 0,
+      "topScore": 0,
+      "id": "RuuGAvqRggA"
+    }
+  ],
+  "assessments": [
+    {
+      "id": "e-J5cpDwGkg",
+      "title": "ass2",
+      "type": "Quiz",
+      "category": "solar family",
+      "topic": "science",
+      "questionFormats": [
+        "multipleChoice"
+      ],
+      "questions": [
+        {
+          "id": 1776580662707,
+          "text": "sun to earth distance",
+          "type": "MCQ",
+          "options": [
+            "132",
+            "149.6",
+            "222",
+            "123"
+          ],
+          "correctAnswer": 1
+        }
+      ],
+      "date": "2026-04-19",
+      "creatorId": "t5FlZ_iaC0I"
+    },
+    {
+      "id": "zIzTxF2m9Q4",
+      "title": "ass3",
+      "type": "Quiz",
+      "category": "solar family",
+      "topic": "science",
+      "questionFormats": [
+        "multipleChoice"
+      ],
+      "questions": [
+        {
+          "id": 1776580900534,
+          "text": "sun and earth distance",
+          "type": "MCQ",
+          "options": [
+            "222",
+            "323",
+            "149.6",
+            "134"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "id": 1776580952242,
+          "text": "moon and earth distance",
+          "type": "MCQ",
+          "options": [
+            "333",
+            "343",
+            "421",
+            "412"
+          ],
+          "correctAnswer": 2
+        },
+        {
+          "id": 1776580982206,
+          "text": "earth and saturn distance",
+          "type": "MCQ",
+          "options": [
+            "343",
+            "444",
+            "432",
+            "123"
+          ],
+          "correctAnswer": 3
+        }
+      ],
+      "date": "2026-04-19",
+      "creatorId": "oNCA-Z49JZI"
+    },
+    {
+      "id": "AanB_TT-Bhw",
+      "title": "ass4",
+      "type": "Quiz",
+      "category": "solar family",
+      "topic": "science",
+      "questionFormats": [
+        "multipleChoice"
+      ],
+      "questions": [
+        {
+          "id": 1776581607297,
+          "text": "sun vs star size",
+          "type": "MCQ",
+          "options": [
+            "3",
+            "4",
+            "10",
+            "100"
+          ],
+          "correctAnswer": 3
+        },
+        {
+          "id": 1776581653162,
+          "text": "earth vs jupiter",
+          "type": "MCQ",
+          "options": [
+            "10",
+            "7",
+            "20",
+            "24"
+          ],
+          "correctAnswer": 2
+        },
+        {
+          "id": 1776581683322,
+          "text": "earth vs moon",
+          "type": "MCQ",
+          "options": [
+            "1.5",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 1
+        }
+      ],
+      "date": "2026-04-19",
+      "creatorId": "G7GWnf_NCCA"
+    },
+    {
+      "id": "Fds-qnSFzEE",
+      "title": "ass2.1",
+      "type": "Quiz",
+      "category": "solar family",
+      "topic": "science",
+      "questionFormats": [
+        "multipleChoice"
+      ],
+      "questions": [
+        {
+          "id": 1776581929485,
+          "text": "1",
+          "type": "MCQ",
+          "options": [
+            "1",
+            "4",
+            "6",
+            "5"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": 1776581946452,
+          "text": "5",
+          "type": "MCQ",
+          "options": [
+            "3",
+            "5",
+            "4",
+            "2"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "id": 1776581963386,
+          "text": "7",
+          "type": "MCQ",
+          "options": [
+            "5",
+            "8",
+            "7",
+            "3"
+          ],
+          "correctAnswer": 2
+        },
+        {
+          "id": 1776581978090,
+          "text": "3",
+          "type": "MCQ",
+          "options": [
+            "1",
+            "4",
+            "8",
+            "3"
+          ],
+          "correctAnswer": 3
+        },
+        {
+          "id": 1776582014938,
+          "text": "9",
+          "type": "MCQ",
+          "options": [
+            "0",
+            "5",
+            "9",
+            "7"
+          ],
+          "correctAnswer": 2
+        },
+        {
+          "id": 1776582031612,
+          "text": "8",
+          "type": "MCQ",
+          "options": [
+            "2",
+            "3",
+            "1",
+            "8"
+          ],
+          "correctAnswer": 3
+        }
+      ],
+      "date": "2026-04-19",
+      "creatorId": "oNCA-Z49JZI"
+    }
+  ],
+  "submissions": [
+    {
+      "id": "61BXpNrbEtg",
+      "studentName": "student1",
+      "assessmentId": "4lj9foldq64",
+      "assessmentTitle": "Admin Auto-Assign Test",
+      "score": 0,
+      "status": "Submitted",
+      "date": "2026-04-18",
+      "answers": {
+        "1": 2,
+        "2": 3,
+        "3": 0
+      }
+    },
+    {
+      "id": "si7p8rSLxVw",
+      "studentName": "student1",
+      "assessmentId": null,
+      "assessmentTitle": "int2",
+      "score": 100,
+      "status": "Passed",
+      "date": "2026-04-18",
+      "answers": {
+        "1776525347225": 2
+      }
+    },
+    {
+      "id": "cC0A9Y0LNkM",
+      "studentName": "student1",
+      "assessmentId": null,
+      "assessmentTitle": "test1",
+      "score": 100,
+      "status": "Passed",
+      "date": "2026-04-18",
+      "answers": {
+        "1776528797457": 2
+      }
+    },
+    {
+      "id": "aNzlrEOzlM4",
+      "studentName": "student1",
+      "assessmentId": null,
+      "assessmentTitle": "ass1",
+      "score": 100,
+      "status": "Passed",
+      "date": "2026-04-18",
+      "answers": {
+        "1776530532161": 3
+      }
+    },
+    {
+      "id": "FWAqj4ZRe70",
+      "studentName": "student1",
+      "assessmentId": null,
+      "assessmentTitle": "solar family",
+      "score": 0,
+      "status": "Submitted",
+      "date": "2026-04-19",
+      "answers": {
+        "1776575534966": "149.6 million kilometers"
+      }
+    },
+    {
+      "id": "07y0VyEBvvc",
+      "studentName": "student2",
+      "assessmentId": null,
+      "assessmentTitle": "solar family",
+      "score": 0,
+      "status": "Submitted",
+      "date": "2026-04-19",
+      "answers": {
+        "1776575534966": "149.6 million kilometers"
+      }
+    },
+    {
+      "id": "kgkRGNkYgwM",
+      "studentName": "student3",
+      "assessmentId": null,
+      "assessmentTitle": "solar family",
+      "score": 0,
+      "status": "Failed",
+      "date": "2026-04-19",
+      "answers": {
+        "1": 0,
+        "2": 0,
+        "3": 0
+      }
+    },
+    {
+      "id": "B3vk4acBK5A",
+      "studentName": "student1",
+      "assessmentId": "e-J5cpDwGkg",
+      "assessmentTitle": "ass2",
+      "score": 100,
+      "status": "Passed",
+      "date": "2026-04-19",
+      "answers": {
+        "1776580662707": 1
+      }
+    },
+    {
+      "id": "hDBjuSDJVDM",
+      "studentName": "student3",
+      "assessmentId": "e-J5cpDwGkg",
+      "assessmentTitle": "ass2",
+      "score": 100,
+      "status": "Passed",
+      "date": "2026-04-19",
+      "answers": {
+        "1776580662707": 1
+      }
+    },
+    {
+      "id": "P71Uhs5fF7k",
+      "studentName": "student1",
+      "assessmentId": "zIzTxF2m9Q4",
+      "assessmentTitle": "ass3",
+      "score": 67,
+      "status": "Passed",
+      "date": "2026-04-19",
+      "answers": {
+        "1776580900534": 1,
+        "1776580952242": 1,
+        "1776580982206": 3
+      }
+    },
+    {
+      "id": "AwaJ7Q0dlo0",
+      "studentName": "student2",
+      "assessmentId": "zIzTxF2m9Q4",
+      "assessmentTitle": "ass3",
+      "score": 33,
+      "status": "Failed",
+      "date": "2026-04-19",
+      "answers": {
+        "1776580900534": 2,
+        "1776580952242": 2,
+        "1776580982206": 2
+      }
+    },
+    {
+      "id": "HJnlFqu4s2g",
+      "studentName": "student3",
+      "assessmentId": "zIzTxF2m9Q4",
+      "assessmentTitle": "ass3",
+      "score": 0,
+      "status": "Failed",
+      "date": "2026-04-19",
+      "answers": {
+        "1776580900534": 2,
+        "1776580952242": 3,
+        "1776580982206": 0
+      }
+    },
+    {
+      "id": "mg1WUaT1BG8",
+      "studentName": "student3",
+      "assessmentId": "AanB_TT-Bhw",
+      "assessmentTitle": "ass4",
+      "score": 100,
+      "status": "Passed",
+      "date": "2026-04-19",
+      "answers": {
+        "1776581607297": 3,
+        "1776581653162": 2,
+        "1776581683322": 1
+      }
+    },
+    {
+      "id": "Bac73hD8rYs",
+      "studentName": "student3",
+      "assessmentId": "Fds-qnSFzEE",
+      "assessmentTitle": "ass2.1",
+      "score": 50,
+      "status": "Passed",
+      "date": "2026-04-19",
+      "answers": {
+        "1776581929485": 0,
+        "1776581946452": 2,
+        "1776581963386": 2,
+        "1776581978090": 3,
+        "1776582014938": 1,
+        "1776582031612": 2
+      }
+    },
+    {
+      "id": "64npzYViPRs",
+      "studentName": "student2",
+      "assessmentId": "Fds-qnSFzEE",
+      "assessmentTitle": "ass2.1",
+      "score": 67,
+      "status": "Passed",
+      "date": "2026-04-19",
+      "answers": {
+        "1776581929485": 0,
+        "1776581946452": 3,
+        "1776581963386": 2,
+        "1776581978090": 3,
+        "1776582014938": 2,
+        "1776582031612": 2
+      }
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
