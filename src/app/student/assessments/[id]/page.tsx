@@ -220,7 +220,7 @@ export default function TakeAssessment() {
           </div>
 
           <div style={{ padding: '1.5rem', background: 'rgba(139, 92, 246, 0.05)', borderRadius: '1.25rem', border: '1px solid rgba(139, 92, 246, 0.2)', color: 'var(--student-primary)', marginBottom: '3rem', display: 'flex', gap: '1rem', textAlign: 'left' }}>
-            <AlertCircle size={24} style={{ shrink: 0, opacity: 0.7 }} />
+            <AlertCircle size={24} style={{ flexShrink: 0, opacity: 0.7 }} />
             <p style={{ fontSize: '0.9rem', fontWeight: 600, lineHeight: 1.5 }}>By initializing this session, you acknowledge full compliance with the institutional academic integrity code.</p>
           </div>
 
@@ -284,7 +284,7 @@ export default function TakeAssessment() {
             </div>
           </div>
           
-          <div style={{ flex: 1, maxWeight: '300px', margin: '0 3rem', height: '6px', background: '#e2e8f0', borderRadius: '10px', overflow: 'hidden', position: 'relative' }}>
+          <div style={{ flex: 1, maxWidth: '300px', margin: '0 3rem', height: '6px', background: '#e2e8f0', borderRadius: '10px', overflow: 'hidden', position: 'relative' }}>
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${((currentQuestionIdx + 1) / testQuestions.length) * 100}%` }}

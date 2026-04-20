@@ -53,7 +53,7 @@ export default function ManageAssessments() {
   const [type, setType] = useState('Quiz');
   const [category, setCategory] = useState('');
   const [topic, setTopic] = useState('');
-  const [questions, setQuestions] = useState<{ id: number; text: string; type: 'MCQ' | 'ShortAnswer'; options?: string[]; correctAnswer?: number }[]>([]);
+  const [questions, setQuestions] = useState<{ id: number; text: string; type: 'MCQ' | 'ShortAnswer' | 'TrueFalse' | 'Essay'; options?: string[]; correctAnswer?: number }[]>([]);
   const [formats, setFormats] = useState({
     multipleChoice: true,
     trueFalse: false,
