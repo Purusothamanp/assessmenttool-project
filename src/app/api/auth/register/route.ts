@@ -45,7 +45,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ 
       success: true, 
       message: 'Registration successful',
-      userId: newUser.id 
+      user: {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role
+      }
     }, { status: 201 });
     
   } catch (err: any) {

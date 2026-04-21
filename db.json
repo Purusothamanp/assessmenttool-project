@@ -15,7 +15,7 @@
       "email": "admin2@gmail.com",
       "role": "admin",
       "status": "active",
-      "lastLogin": "2026-04-20 21:36",
+      "lastLogin": "2026-04-21 15:36",
       "password": "admin2@2"
     },
     {
@@ -106,6 +106,15 @@
       "status": "active",
       "lastLogin": "2026-04-21 13:57",
       "id": "Dr8sLK_zM1w"
+    },
+    {
+      "name": "Auto Login User",
+      "email": "autologin_1776762263526@example.com",
+      "password": "password123",
+      "role": "educator",
+      "status": "active",
+      "lastLogin": "Never",
+      "id": "V1Pp4JKvhoI"
     }
   ],
   "reports": [

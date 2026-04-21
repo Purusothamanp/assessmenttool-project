@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { API_BASE_URL } from '@/lib/apiConfig';
 import { motion } from 'framer-motion';
 import { Mail, Lock, User, UserPlus, Shield, BookOpen, GraduationCap, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -11,11 +11,11 @@ type UserRole = 'admin' | 'educator' | 'student';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { register, isLoading: isAuthLoading } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<UserRole>('student');
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,30 +31,11 @@ export default function RegisterPage() {
     setError('');
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-          role
-        })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Success! Redirect to login
-        router.push('/login?registered=true');
-      } else {
-        setError(data.error || 'Registration failed');
-      }
-    } catch (err) {
+      await register(name, normalizedEmail, password, role);
+      // Navigation is handled inside the register function in AuthContext
+    } catch (err: any) {
       console.error(err);
-      setError('Registration failed. Please try again.');
-    } finally {
-      setIsLoading(false);
+      setError(err.message || 'Registration failed. Please try again.');
     }
   };
 
@@ -260,9 +241,9 @@ export default function RegisterPage() {
               background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', border: 'none',
               boxShadow: '0 10px 20px -5px rgba(37, 99, 235, 0.3)'
             }}
-            disabled={isLoading}
+            disabled={isAuthLoading}
           >
-            {isLoading ? 'Registering...' : 'Register'}
+            {isAuthLoading ? 'Registering...' : 'Register'}
           </motion.button>
 
           <p style={{ textAlign: 'center', marginTop: '2.5rem', fontSize: '1rem', color: '#64748b', fontWeight: 500 }}>

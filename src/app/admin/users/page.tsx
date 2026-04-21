@@ -71,7 +71,7 @@ export default function UserManagementPage() {
 
     if (confirm('Are you sure you want to remove this user?')) {
       try {
-        const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+        const response = await fetch(`/api/users/${id}`, {
           method: 'DELETE'
         });
         if (response.ok) {
@@ -90,7 +90,7 @@ export default function UserManagementPage() {
     const updatedUser = { ...user, status: user.status === 'active' ? 'inactive' : 'active' };
 
     try {
-      const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+      const response = await fetch(`/api/users/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedUser)
@@ -127,7 +127,7 @@ export default function UserManagementPage() {
       };
 
       try {
-        const response = await fetch(`${API_BASE_URL}/users/${editingUser.id}`, {
+        const response = await fetch(`/api/users/${editingUser.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedUser)

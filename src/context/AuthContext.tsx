@@ -16,6 +16,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string, role: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -36,6 +37,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setIsLoading(false);
   }, []);
+
+  const navigateBasedOnRole = (role: UserRole) => {
+    if (role === 'admin') router.push('/admin');
+    else if (role === 'educator') router.push('/educator');
+    else if (role === 'student') router.push('/student');
+  };
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
@@ -58,13 +65,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(loggedInUser);
       setIsLoading(false);
 
-      // Redirect based on role
-      if (loggedInUser.role === 'admin') router.push('/admin');
-      else if (loggedInUser.role === 'educator') router.push('/educator');
-      else if (loggedInUser.role === 'student') router.push('/student');
+      navigateBasedOnRole(loggedInUser.role);
       
     } catch (err: any) {
       console.error('Login error:', err);
+      setIsLoading(false);
+      throw err;
+    }
+  };
+
+  const register = async (name: string, email: string, password: string, role: string) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, role })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed');
+      }
+
+      // Auto-login after successful registration
+      const newUser = data.user;
+      localStorage.setItem('assessment_user', JSON.stringify(newUser));
+      setUser(newUser);
+      setIsLoading(false);
+
+      navigateBasedOnRole(newUser.role);
+    } catch (err: any) {
+      console.error('Registration error:', err);
       setIsLoading(false);
       throw err;
     }
@@ -77,7 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

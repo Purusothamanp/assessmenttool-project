@@ -60,7 +60,7 @@ export default function StudentResults() {
 
   const fetchResults = useCallback(async () => {
     try {
-      const aRes = await fetch(`${API_BASE_URL}/assessments`);
+      const aRes = await fetch(`/api/assessments`);
       const allAssessments = await aRes.json();
       const myAssessmentTitles = allAssessments
         .filter((a: Assessment) => a.creatorId === user?.id)
@@ -98,7 +98,7 @@ export default function StudentResults() {
     try {
       let response;
       if (submission.assessmentId) {
-        response = await fetch(`${API_BASE_URL}/assessments/${submission.assessmentId}`);
+        response = await fetch(`/api/assessments/${submission.assessmentId}`);
         const data = await response.json();
         if (data) {
           setEvaluatingAssessment(data);
@@ -135,7 +135,7 @@ export default function StudentResults() {
     setIsSaving(true);
 
     try {
-      await fetch(`${API_BASE_URL}/submissions/${evaluatingSubmission.id}`, {
+      await fetch(`/api/submissions/${evaluatingSubmission.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

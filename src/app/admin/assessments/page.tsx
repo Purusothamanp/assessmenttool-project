@@ -114,7 +114,7 @@ export default function AdminAssessments() {
 
     try {
       if (editingAssessment) {
-        await fetch(`${API_BASE_URL}/assessments/${editingAssessment.id}`, {
+        await fetch(`/api/assessments/${editingAssessment.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(assessmentData)
@@ -136,7 +136,7 @@ export default function AdminAssessments() {
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this assessment?')) {
       try {
-        await fetch(`${API_BASE_URL}/assessments/${id}`, { method: 'DELETE' });
+        await fetch(`/api/assessments/${id}`, { method: 'DELETE' });
         fetchAssessments();
       } catch (err) {
         console.error('Error deleting assessment:', err);
