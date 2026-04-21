@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { API_BASE_URL } from '@/lib/apiConfig';
+// API calls now route through the internal /api proxy
 import { Search, BookOpen, Clock, ArrowRight, Filter } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -25,7 +25,7 @@ export default function StudentAssessments() {
   const fetchSubmissions = useCallback(async () => {
     try {
       if (!user) return;
-      const response = await fetch(`${API_BASE_URL}/submissions?studentName=${encodeURIComponent(user.name)}`);
+      const response = await fetch(`/api/submissions?studentName=${encodeURIComponent(user.name)}`);
       const data = await response.json();
       setSubmissions(data.reverse());
     } catch (err) {

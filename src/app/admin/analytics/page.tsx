@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
-import { API_BASE_URL } from '@/lib/apiConfig';
+// API calls are now routed through the internal /api proxy
 
 export default function AnalyticsPage() {
   const { user } = useAuth();
@@ -61,9 +61,9 @@ export default function AnalyticsPage() {
   const fetchReports = useCallback(async () => {
     try {
       const [reportsRes, assessmentsRes, submissionsRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/reports`),
-        fetch(`${API_BASE_URL}/assessments`),
-        fetch(`${API_BASE_URL}/submissions`)
+        fetch('/api/reports'),
+        fetch('/api/assessments'),
+        fetch('/api/submissions')
       ]);
 
       const assessmentsData = await assessmentsRes.json();

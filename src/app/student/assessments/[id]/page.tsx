@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { API_BASE_URL } from '@/lib/apiConfig';
+// API calls now route through the internal /api proxy
 import { AlertCircle, Clock, CheckCircle, BookOpen, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -44,18 +44,18 @@ export default function TakeAssessment() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const subRes = await fetch(`${API_BASE_URL}/submissions/${id}`);
+        const subRes = await fetch('/api/submissions/' + id);
         const subData = await subRes.json();
         setSubmission(subData);
 
         if (subData.assessmentId) {
-          const aRes = await fetch(`${API_BASE_URL}/assessments/${subData.assessmentId}`);
+          const aRes = await fetch('/api/assessments/' + subData.assessmentId);
           const aData = await aRes.json();
           if (aData && aData.questions) {
             setTestQuestions(aData.questions);
           }
         } else if (subData.assessmentTitle) {
-          const aRes = await fetch(`${API_BASE_URL}/assessments?title=${encodeURIComponent(subData.assessmentTitle)}`);
+          const aRes = await fetch('/api/assessments?title=' + encodeURIComponent(subData.assessmentTitle));
           const acts = await aRes.json();
           if (acts.length > 0 && acts[0].questions && acts[0].questions.length > 0) {
             setTestQuestions(acts[0].questions);
@@ -125,7 +125,7 @@ export default function TakeAssessment() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/submissions/${id}`, {
+      const response = await fetch('/api/submissions/' + id, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

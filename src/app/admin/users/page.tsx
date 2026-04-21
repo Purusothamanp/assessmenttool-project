@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { API_BASE_URL } from '@/lib/apiConfig';
+// API calls are now routed through the internal /api proxy
 import { UserRecord } from '@/lib/mockData';
 import { 
   Plus,
@@ -33,7 +33,7 @@ export default function UserManagementPage() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/users`);
+      const response = await fetch('/api/users');
       const data = await response.json();
       setUsers(data.reverse()); // Newest first
     } catch (error) {
@@ -154,7 +154,7 @@ export default function UserManagementPage() {
       };
 
       try {
-        const response = await fetch(`${API_BASE_URL}/users`, {
+        const response = await fetch('/api/users', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(newUser)

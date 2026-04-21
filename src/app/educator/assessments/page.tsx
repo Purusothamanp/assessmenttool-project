@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
-import { API_BASE_URL } from '@/lib/apiConfig';
+// API calls now route through the internal /api proxy
 
 interface Assessment {
   id: string;
@@ -64,7 +64,7 @@ export default function ManageAssessments() {
 
   const fetchAssessments = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/assessments`);
+      const response = await fetch('/api/assessments');
       const data = await response.json();
       // Filter only assessments created by this educator
       const myData = data.filter((a: Assessment) => a.creatorId === user?.id);
@@ -82,7 +82,7 @@ export default function ManageAssessments() {
     // Fetch students for assign dropdown
     const getStudents = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/users?role=student`);
+        const res = await fetch('/api/users?role=student');
         const data = await res.json();
         setStudentsList(data);
       } catch (e) {
@@ -122,7 +122,7 @@ export default function ManageAssessments() {
           body: JSON.stringify({ ...editingAssessment, title, type, category, topic, questionFormats: selectedFormats, questions })
         });
       } else {
-        await fetch(`${API_BASE_URL}/assessments`, {
+        await fetch('/api/assessments', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(assessmentData)
@@ -393,7 +393,7 @@ export default function ManageAssessments() {
                         : studentsList.filter(s => s.id === selectedAssignee);
                       
                       for (const student of targets) {
-                        await fetch(`${API_BASE_URL}/submissions`, {
+                        await fetch('/api/submissions', {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify({

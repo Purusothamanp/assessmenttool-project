@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
-import { API_BASE_URL } from '@/lib/apiConfig';
+// API calls now route through the internal /api proxy
 
 interface Submission {
   id: string;
@@ -66,7 +66,7 @@ export default function StudentResults() {
         .filter((a: Assessment) => a.creatorId === user?.id)
         .map((a: Assessment) => a.title);
 
-      const response = await fetch(`${API_BASE_URL}/submissions`);
+      const response = await fetch('/api/submissions');
       const allSubmissions = await response.json();
       
       const mySubmissions = allSubmissions.filter((s: Submission) => 
@@ -112,7 +112,7 @@ export default function StudentResults() {
           setManualMarks(initialMarks);
         }
       } else {
-        response = await fetch(`${API_BASE_URL}/assessments?title=${encodeURIComponent(submission.assessmentTitle)}`);
+        response = await fetch(`/api/assessments?title=${encodeURIComponent(submission.assessmentTitle)}`);
         const data = await response.json();
         if (data.length > 0) {
           setEvaluatingAssessment(data[0]);
