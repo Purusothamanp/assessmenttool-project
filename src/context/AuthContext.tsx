@@ -39,55 +39,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
-    const normalizedEmail = email.trim().toLowerCase();
     
     try {
-      // 1. Find the user in our database with email only
-      const response = await fetch(`${API_BASE_URL}/users?email=${encodeURIComponent(normalizedEmail)}`);
-      const users = await response.json();
-      
-      if (!users || users.length === 0) {
-        throw new Error('User not found. Please register first.');
-      }
-
-      const dbUser = users[0];
-
-      // 2. Check password
-      if (dbUser.password !== password) {
-        throw new Error('Invalid password. Please try again.');
-      }
-
-      // 3. Format timestamp: 2024-03-20 10:30
-      const now = new Date();
-      const datePart = now.toISOString().split('T')[0];
-      const timePart = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-      const timestamp = `${datePart} ${timePart}`;
-      
-      // 4. Persist the last login time to the database
-      await fetch(`${API_BASE_URL}/users/${dbUser.id}`, {
-        method: 'PATCH',
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lastLogin: timestamp })
+        body: JSON.stringify({ email, password })
       });
       
-      const loggedInUser = {
-        id: dbUser.id,
-        name: dbUser.name,
-        email: dbUser.email,
-        role: dbUser.role
-      };
+      const data = await response.json();
 
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
+      const loggedInUser = data;
       localStorage.setItem('assessment_user', JSON.stringify(loggedInUser));
       setUser(loggedInUser);
       setIsLoading(false);
 
-      // Redirect based on role from database
-      if (dbUser.role === 'admin') router.push('/admin');
-      else if (dbUser.role === 'educator') router.push('/educator');
-      else if (dbUser.role === 'student') router.push('/student');
+      // Redirect based on role
+      if (loggedInUser.role === 'admin') router.push('/admin');
+      else if (loggedInUser.role === 'educator') router.push('/educator');
+      else if (loggedInUser.role === 'student') router.push('/student');
       
-    } catch (err) {
-      console.error('Login integration error:', err);
+    } catch (err: any) {
+      console.error('Login error:', err);
       setIsLoading(false);
       throw err;
     }

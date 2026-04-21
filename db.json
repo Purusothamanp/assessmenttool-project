@@ -97,6 +97,15 @@
       "status": "active",
       "lastLogin": "Never",
       "id": "Soci9_rpoJU"
+    },
+    {
+      "name": "Backend Test User",
+      "email": "backendtest@example.com",
+      "password": "password123",
+      "role": "student",
+      "status": "active",
+      "lastLogin": "2026-04-21 13:57",
+      "id": "Dr8sLK_zM1w"
     }
   ],
   "reports": [

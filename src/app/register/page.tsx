@@ -31,35 +31,24 @@ export default function RegisterPage() {
     setError('');
 
     try {
-      // 1. Check if user already exists
-      const checkResponse = await fetch(`${API_BASE_URL}/users?email=${encodeURIComponent(normalizedEmail)}`);
-      const existingUsers = await checkResponse.json();
-      
-      if (existingUsers && existingUsers.length > 0) {
-        setError('This email is already registered. Please sign in.');
-        setIsLoading(false);
-        return;
-      }
-
-      // 2. Logic to save to db.json via our backend
-      const response = await fetch(`${API_BASE_URL}/users`, {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name,
-          email: normalizedEmail,
+          email,
           password,
-          role,
-          status: 'active',
-          lastLogin: 'Never'
+          role
         })
       });
+
+      const data = await response.json();
 
       if (response.ok) {
         // Success! Redirect to login
         router.push('/login?registered=true');
       } else {
-        throw new Error('Registration failed');
+        setError(data.error || 'Registration failed');
       }
     } catch (err) {
       console.error(err);
