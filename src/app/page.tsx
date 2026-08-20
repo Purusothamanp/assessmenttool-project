@@ -75,7 +75,7 @@ export default function Home() {
               Log In
             </motion.button>
           </Link>
-          <Link href="/login" style={{ textDecoration: 'none' }}>
+          <Link href="/register" style={{ textDecoration: 'none' }}>
             <motion.button
               whileHover={{ scale: 1.04, boxShadow: '0 8px 20px -4px rgba(37, 99, 235, 0.4)' }}
               whileTap={{ scale: 0.96 }}
@@ -87,7 +87,7 @@ export default function Home() {
                 transition: 'all 0.2s ease'
               }}
             >
-              Sign In
+              Sign Up
             </motion.button>
           </Link>
         </div>
