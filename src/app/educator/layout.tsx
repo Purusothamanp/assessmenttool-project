@@ -161,7 +161,7 @@ export default function EducatorLayout({ children }: { children: React.ReactNode
         </header>
 
         {/* Page Content */}
-        <div style={{ padding: '1.25rem 1.5rem', maxWidth: '1400px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+        <div style={{ padding: '1.25rem 1.5rem', width: '100%', boxSizing: 'border-box' }}>
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}

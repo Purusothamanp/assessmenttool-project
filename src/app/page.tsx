@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { 
-  Rocket, Sparkles, ShieldCheck, CheckCircle2, ArrowRight, Zap 
+import {
+  Rocket, Sparkles, ShieldCheck, CheckCircle2, ArrowRight, Zap
 } from 'lucide-react';
 
 export default function Home() {
@@ -20,21 +20,21 @@ export default function Home() {
     }}>
       {/* Ethereal Aurora Background (Matching Login & Register) */}
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
-        <motion.div 
+        <motion.div
           animate={{ scale: [1, 1.25, 1], x: [0, 60, 0], y: [0, 40, 0] }}
           transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-          style={{ 
-            position: 'absolute', top: '-15%', left: '-5%', width: '60%', height: '60%', 
-            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.09) 0%, transparent 70%)', filter: 'blur(100px)' 
-          }} 
+          style={{
+            position: 'absolute', top: '-15%', left: '-5%', width: '60%', height: '60%',
+            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.09) 0%, transparent 70%)', filter: 'blur(100px)'
+          }}
         />
-        <motion.div 
+        <motion.div
           animate={{ scale: [1.2, 1, 1.2], x: [0, -60, 0], y: [0, -40, 0] }}
           transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
-          style={{ 
-            position: 'absolute', bottom: '-15%', right: '-5%', width: '60%', height: '60%', 
-            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.09) 0%, transparent 70%)', filter: 'blur(100px)' 
-          }} 
+          style={{
+            position: 'absolute', bottom: '-15%', right: '-5%', width: '60%', height: '60%',
+            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.09) 0%, transparent 70%)', filter: 'blur(100px)'
+          }}
         />
       </div>
 
@@ -122,7 +122,7 @@ export default function Home() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: 'spring', damping: 15 }}
-            style={{ 
+            style={{
               width: '84px', height: '84px', borderRadius: '24px', margin: '0 auto 2.5rem',
               background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
               display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white',
@@ -176,9 +176,9 @@ export default function Home() {
           >
             <Link href="/login" style={{ textDecoration: 'none' }}>
               <motion.button
-                whileHover={{ 
-                  scale: 1.05, 
-                  boxShadow: '0 15px 35px -5px rgba(59, 130, 246, 0.4)' 
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: '0 15px 35px -5px rgba(59, 130, 246, 0.4)'
                 }}
                 whileTap={{ scale: 0.95 }}
                 style={{

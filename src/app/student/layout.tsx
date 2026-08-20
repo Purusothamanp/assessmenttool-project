@@ -126,35 +126,35 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
       <main style={{ flex: 1, marginLeft: '280px', display: 'flex', flexDirection: 'column' }}>
         {/* Top Header */}
         <header style={{ 
-          height: '80px', 
+          height: '60px', 
           background: 'rgba(255, 255, 255, 0.5)', 
           backdropFilter: 'blur(12px)',
           borderBottom: '1px solid var(--card-border)',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 3rem',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.5rem',
           position: 'sticky', top: 0, zIndex: 40
         }}>
-          <div style={{ color: 'var(--muted-foreground)', fontSize: '0.9rem', fontWeight: 500 }}>
+          <div style={{ color: 'var(--muted-foreground)', fontSize: '0.85rem', fontWeight: 500 }}>
              Dashboard / <span style={{ color: 'var(--foreground)', fontWeight: 600 }}>{pathname === '/student' ? 'Overview' : pathname.split('/').pop()?.replace(/^\w/, c => c.toUpperCase())}</span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <div style={{ textAlign: 'right' }}>
-                <p style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--foreground)' }}>{user.name}</p>
-                <p style={{ fontSize: '0.7rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase' }}>{user.role}</p>
+                <p style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--foreground)' }}>{user.name}</p>
+                <p style={{ fontSize: '0.65rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase' }}>{user.role}</p>
               </div>
               <div 
                 className="vibrant-gradient-student"
                 style={{ 
-                  width: '44px', 
-                  height: '44px', 
-                  borderRadius: '14px', 
+                  width: '36px', 
+                  height: '36px', 
+                  borderRadius: '10px', 
                   color: 'white', 
                   display: 'flex', 
                   alignItems: 'center', 
                   justifyContent: 'center', 
                   fontWeight: 700,
-                  fontSize: '1.1rem',
+                  fontSize: '0.9rem',
                   boxShadow: '0 8px 16px -4px rgba(124, 58, 237, 0.2)'
                 }}
               >
@@ -165,7 +165,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         </header>
 
         {/* Page Content */}
-        <div style={{ padding: '3rem', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
+        <div style={{ padding: '1.25rem 1.5rem', width: '100%', boxSizing: 'border-box' }}>
           <motion.div 
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}

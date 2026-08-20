@@ -28,6 +28,4 @@ export const mockUsers: UserRecord[] = [
 export const mockReports: AssessmentReport[] = [
   { id: 'R1', title: 'Mid-term Mathematics', date: '2024-03-10', participants: 45, averageScore: 78, passingRate: 85, topScore: 98 },
   { id: 'R2', title: 'English Literature Quiz', date: '2024-03-12', participants: 30, averageScore: 82, passingRate: 92, topScore: 100 },
-  { id: 'R3', title: 'Science Lab Assessment', date: '2024-03-15', participants: 28, averageScore: 65, passingRate: 70, topScore: 92 },
-  { id: 'R4', title: 'History Final Exam', date: '2024-03-18', participants: 50, averageScore: 74, passingRate: 80, topScore: 95 },
 ];
