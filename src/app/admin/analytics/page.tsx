@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
+import { API_BASE_URL } from '@/lib/api';
 
 export default function AnalyticsPage() {
   const { } = useAuth();
@@ -29,9 +30,9 @@ export default function AnalyticsPage() {
   const fetchReports = useCallback(async () => {
     try {
       const [, assessmentsRes, submissionsRes] = await Promise.all([
-        fetch('http://localhost:3001/reports'),
-        fetch('http://localhost:3001/assessments'),
-        fetch('http://localhost:3001/submissions')
+        fetch(`${API_BASE_URL}/reports`),
+        fetch(`${API_BASE_URL}/assessments`),
+        fetch(`${API_BASE_URL}/submissions`)
       ]);
 
       const assessmentsData = await assessmentsRes.json();

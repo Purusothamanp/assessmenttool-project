@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { API_BASE_URL } from '@/lib/api';
 
 interface Submission {
   id: string;
@@ -37,7 +38,7 @@ export default function StudentAssessments() {
   const fetchSubmissions = useCallback(async () => {
     try {
       if (!user) return;
-      const response = await fetch(`http://localhost:3001/submissions?studentName=${encodeURIComponent(user.name)}`);
+      const response = await fetch(`${API_BASE_URL}/submissions?studentName=${encodeURIComponent(user.name)}`);
       const data = await response.json();
       setSubmissions(data.reverse());
     } catch (err) {

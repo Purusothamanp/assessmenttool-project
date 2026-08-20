@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { API_BASE_URL } from '@/lib/api';
 
 export type UserRole = 'admin' | 'educator' | 'student' | null;
 
@@ -33,7 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (storedUser) {
         try {
           const parsedUser = JSON.parse(storedUser);
-          const response = await fetch(`http://localhost:3001/users/${parsedUser.id}`);
+          const response = await fetch(`${API_BASE_URL}/users/${parsedUser.id}`);
           if (response.ok) {
             const dbUser = await response.json();
             if (dbUser.status === 'inactive') {
@@ -61,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     try {
       // 1. Find the user in our database with email only
-      const response = await fetch(`http://localhost:3001/users?email=${encodeURIComponent(normalizedEmail)}`);
+      const response = await fetch(`${API_BASE_URL}/users?email=${encodeURIComponent(normalizedEmail)}`);
       const users = await response.json();
       
       if (!users || users.length === 0) {
@@ -87,7 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const timestamp = `${datePart} ${timePart}`;
       
       // 4. Persist the last login time to the database
-      await fetch(`http://localhost:3001/users/${dbUser.id}`, {
+      await fetch(`${API_BASE_URL}/users/${dbUser.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ lastLogin: timestamp })

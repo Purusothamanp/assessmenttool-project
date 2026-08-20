@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
+import { API_BASE_URL } from '@/lib/api';
 
 interface Assessment {
   id: string;
@@ -69,7 +70,7 @@ export default function AdminAssessments() {
 
   const fetchAssessments = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:3001/assessments');
+      const response = await fetch(`${API_BASE_URL}/assessments`);
       const data = await response.json();
       setAssessments(data.reverse());
     } catch (err) {
@@ -84,7 +85,7 @@ export default function AdminAssessments() {
     
     const getStudents = async () => {
       try {
-        const res = await fetch('http://localhost:3001/users?role=student');
+        const res = await fetch(`${API_BASE_URL}/users?role=student`);
         const data = await res.json();
         setStudentsList(data);
       } catch (e) {
@@ -118,13 +119,13 @@ export default function AdminAssessments() {
 
     try {
       if (editingAssessment) {
-        await fetch(`http://localhost:3001/assessments/${editingAssessment.id}`, {
+        await fetch(`${API_BASE_URL}/assessments/${editingAssessment.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(assessmentData)
         });
       } else {
-        await fetch('http://localhost:3001/assessments', {
+        await fetch(`${API_BASE_URL}/assessments`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(assessmentData)
@@ -140,7 +141,7 @@ export default function AdminAssessments() {
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this assessment?')) {
       try {
-        await fetch(`http://localhost:3001/assessments/${id}`, { method: 'DELETE' });
+        await fetch(`${API_BASE_URL}/assessments/${id}`, { method: 'DELETE' });
         fetchAssessments();
       } catch (err) {
         console.error('Error deleting assessment:', err);
@@ -569,7 +570,7 @@ export default function AdminAssessments() {
                       
                       const dateStr = new Date().toLocaleDateString('en-CA');
                       for (const student of targets) {
-                        await fetch('http://localhost:3001/submissions', {
+                        await fetch(`${API_BASE_URL}/submissions`, {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify({
