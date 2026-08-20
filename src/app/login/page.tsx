@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useAuth, UserRole } from '@/context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Lock, LogIn, Shield, BookOpen, GraduationCap, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Mail, Lock, LogIn, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { Suspense } from 'react';
 
@@ -13,7 +13,7 @@ function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [success] = useState('');
+
   const searchParams = useSearchParams();
   const registrationSuccess = searchParams.get('registered') === 'true';
 
@@ -26,17 +26,12 @@ function LoginForm() {
     setError('');
     try {
       await login(email, password);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError('Login failed. Please check your credentials.');
+      setError(err?.message || 'Login failed. Please check your credentials.');
     }
   };
 
-  const roles = [
-    { id: 'admin', label: 'Administrator', icon: Shield, color: '#3b82f6' },
-    { id: 'educator', label: 'Educator', icon: BookOpen, color: '#10b981' },
-    { id: 'student', label: 'Student', icon: GraduationCap, color: '#8b5cf6' },
-  ];
 
   return (
     <div style={{
@@ -101,17 +96,17 @@ function LoginForm() {
             <LogIn size={40} />
           </div>
           <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-1.5px', marginBottom: '0.75rem' }}>AssessmentTool</h1>
-          <p style={{ color: '#64748b', fontSize: '1.1rem', fontWeight: 500 }}>Secure Access Portal</p>
+          <p style={{ color: '#64748b', fontSize: '1.1rem', fontWeight: 500 }}>Login to Your Account</p>
         </div>
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '1.5rem' }}>
-            <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Access Identity</label>
+            <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Email</label>
             <div style={{ position: 'relative' }}>
               <Mail size={20} style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: '#cbd5e1' }} />
               <input
                 type="email"
-                placeholder="identity@domain.com"
+                placeholder="email@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 style={{ 
@@ -126,7 +121,7 @@ function LoginForm() {
           </div>
 
           <div style={{ marginBottom: '2.5rem' }}>
-            <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Security Key</label>
+            <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Password</label>
             <div style={{ position: 'relative' }}>
               <Lock size={20} style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: '#cbd5e1' }} />
               <input
@@ -161,7 +156,7 @@ function LoginForm() {
                 }}
               >
                 {registrationSuccess ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
-                {registrationSuccess ? 'Identity Verified. Initialize Login.' : error}
+                {registrationSuccess ? 'Registration successful. Please log in.' : error}
               </motion.div>
             )}
           </AnimatePresence>
@@ -182,7 +177,7 @@ function LoginForm() {
           </motion.button>
 
           <p style={{ textAlign: 'center', marginTop: '2.5rem', fontSize: '1rem', color: '#64748b', fontWeight: 500 }}>
-            Unregistered Identity? <Link href="/register" style={{ color: '#3b82f6', fontWeight: 700, textDecoration: 'none' }}>Register Now</Link>
+            Don&apos;t have an account? <Link href="/register" style={{ color: '#3b82f6', fontWeight: 700, textDecoration: 'none' }}>Register Now</Link>
           </p>
         </form>
       </motion.div>

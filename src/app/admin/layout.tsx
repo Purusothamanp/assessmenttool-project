@@ -3,12 +3,11 @@
 import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter, usePathname } from 'next/navigation';
-import { 
-  Users, 
-  BarChart2, 
-  LogOut, 
+import {
+  Users,
+  BarChart2,
+  LogOut,
   ShieldCheck,
-  Bell,
   BookOpen
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -29,7 +28,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--background)' }}>
       {/* Sidebar */}
-      <aside 
+      <aside
         className="glass-panel"
         style={{
           width: '280px',
@@ -48,7 +47,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <ShieldCheck size={24} />
           </div>
           <h2 style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '-0.5px' }}>
-            Admin<span style={{ color: 'var(--admin-primary)' }}>Portal</span>
+            Admin<span style={{ color: 'var(--admin-primary)' }}> Dashboard</span>
           </h2>
         </div>
 
@@ -117,44 +116,44 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Main Content */}
-      <main style={{ flex: 1, marginLeft: '280px', padding: '0' }}>
+      <main style={{ flex: 1, marginLeft: '280px', padding: '0', minWidth: 0 }}>
         {/* Header */}
         <header style={{
-          height: '80px',
+          height: '60px',
           background: 'rgba(255, 255, 255, 0.5)',
           backdropFilter: 'blur(12px)',
           borderBottom: '1px solid var(--card-border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 3rem',
+          padding: '0 1.5rem',
           position: 'sticky',
           top: 0,
           zIndex: 40
         }}>
-          <div style={{ color: 'var(--muted-foreground)', fontSize: '0.9rem', fontWeight: 500 }}>
-             Dashboard / <span style={{ color: 'var(--foreground)', fontWeight: 600 }}>{pathname.split('/').pop()?.replace(/^\w/, c => c.toUpperCase())}</span>
+          <div style={{ color: 'var(--muted-foreground)', fontSize: '0.85rem', fontWeight: 500 }}>
+            Dashboard / <span style={{ color: 'var(--foreground)', fontWeight: 600 }}>{pathname.split('/').pop()?.replace(/^\w/, c => c.toUpperCase())}</span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <div style={{ textAlign: 'right' }}>
-                <p style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--foreground)' }}>{user?.name || 'Administrator'}</p>
-                <p style={{ fontSize: '0.7rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase' }}>Super Admin</p>
+                <p style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--foreground)' }}>{user?.name || 'Administrator'}</p>
+                <p style={{ fontSize: '0.65rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase' }}>Super Admin</p>
               </div>
-              <div 
+              <div
                 className="vibrant-gradient-admin"
-                style={{ 
-                  width: '44px', 
-                  height: '44px', 
-                  borderRadius: '14px', 
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '10px',
                   color: 'white',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: 700,
-                  fontSize: '1.1rem',
-                  boxShadow: '0 8px 16px -4px rgba(30, 64, 175, 0.2)'
+                  fontSize: '0.9rem',
+                  boxShadow: '0 6px 12px -3px rgba(30, 64, 175, 0.2)'
                 }}
               >
                 {user?.name?.[0].toUpperCase() || 'A'}
@@ -164,7 +163,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </header>
 
         {/* Page Content */}
-        <div style={{ padding: '3rem', maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{ padding: '1.25rem 1.5rem', width: '100%', boxSizing: 'border-box' }}>
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -177,3 +176,4 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     </div>
   );
 }
+

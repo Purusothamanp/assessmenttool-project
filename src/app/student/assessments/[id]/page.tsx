@@ -77,6 +77,7 @@ export default function TakeAssessment() {
       handleSubmit();
     }
     return () => clearInterval(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, timeLeft]);
 
   const handleOptionSelect = (qId: number, val: number | string) => {
@@ -184,7 +185,7 @@ export default function TakeAssessment() {
           </div>
           
           <h1 style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-1px', marginBottom: '0.75rem' }}>{submission.assessmentTitle}</h1>
-          <p style={{ color: 'var(--muted-foreground)', fontSize: '1.1rem', fontWeight: 500, marginBottom: '2.5rem' }}>Academic Integrity Protocol v1.4</p>
+          <p style={{ color: 'var(--muted-foreground)', fontSize: '1.1rem', fontWeight: 500, marginBottom: '2.5rem' }}>Academic Guidelines</p>
           
           <div style={{ display: 'flex', justifyContent: 'center', gap: '2.5rem', marginBottom: '3rem', padding: '1.5rem', background: '#f8fafc', borderRadius: '1.5rem' }}>
              <div style={{ textAlign: 'center' }}>
@@ -250,9 +251,9 @@ export default function TakeAssessment() {
           </motion.div>
         </motion.div>
         
-        <h2 style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-1px', marginBottom: '1rem' }}>Finalizing Protocol</h2>
+        <h2 style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-1px', marginBottom: '1rem' }}>Submitting Assessment</h2>
         <p style={{ color: 'var(--muted-foreground)', fontSize: '1.2rem', fontWeight: 500, maxWidth: '400px', lineHeight: 1.6 }}>
-          Syncing your challenge responses with the global content repository...
+          Saving your responses...
         </p>
         
         <div style={{ width: '200px', height: '6px', background: '#f1f5f9', borderRadius: '10px', marginTop: '3rem', overflow: 'hidden' }}>
@@ -406,7 +407,7 @@ export default function TakeAssessment() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: isNaN(answers[currentQ.id] as any) && !answers[currentQ.id] ? '#ef4444' : '#10b981' }}>
                <AlertCircle size={20} style={{ opacity: 0.6 }} />
                <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>
-                 {answers[currentQ.id] !== undefined ? 'Protocol Locked' : 'Selection Required'}
+                 {answers[currentQ.id] !== undefined ? 'Answer Locked' : 'Select an Answer'}
                </span>
             </div>
 
@@ -421,7 +422,7 @@ export default function TakeAssessment() {
                 opacity: (answers[currentQ.id] === undefined || (typeof answers[currentQ.id] === 'string' && !(answers[currentQ.id] as string).trim())) ? 0.5 : 1
               }}
             >
-              {currentQuestionIdx === testQuestions.length - 1 ? 'Finalize Protocol' : 'Next Challenge'}
+              {currentQuestionIdx === testQuestions.length - 1 ? 'Submit Assessment' : 'Next Question'}
             </button>
           </div>
         </motion.div>

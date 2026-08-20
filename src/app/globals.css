@@ -178,6 +178,198 @@ input:focus, select:focus, textarea:focus {
   animation: fadeInSlide 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* User List & Table Hover Styles */
+.user-table-container {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  background: var(--card);
+  transition: box-shadow 0.3s ease;
+}
+
+.user-table-row {
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.user-table-row:hover {
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.05) 0%, rgba(248, 250, 252, 0.95) 100%);
+  transform: scale(1.002) translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  z-index: 2;
+}
+
+.user-table-row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--primary);
+  opacity: 0;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  transform: scaleY(0.5);
+}
+
+.user-table-row:hover::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.user-avatar {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.user-table-row:hover .user-avatar {
+  transform: scale(1.12) rotate(2deg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.user-name {
+  transition: color 0.2s ease;
+}
+
+.user-table-row:hover .user-name {
+  color: var(--primary-hover);
+}
+
+.user-action-btn {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  color: var(--muted-foreground);
+  background: transparent;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-action-btn.toggle:hover {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--success);
+  transform: scale(1.18);
+}
+
+.user-action-btn.edit:hover {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--primary);
+  transform: scale(1.18);
+}
+
+.user-action-btn.delete:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--destructive);
+  transform: scale(1.18);
+}
+
+.role-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all 0.25s ease;
+  display: inline-block;
+}
+
+.role-badge-admin {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+.user-table-row:hover .role-badge-admin,
+.user-card-item:hover .role-badge-admin {
+  background: #fecaca;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.25);
+}
+
+.role-badge-educator {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+
+.user-table-row:hover .role-badge-educator,
+.user-card-item:hover .role-badge-educator {
+  background: #a7f3d0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
+}
+
+.role-badge-student {
+  background: #ede9fe;
+  color: #5b21b6;
+  border: 1px solid #c4b5fd;
+}
+
+.user-table-row:hover .role-badge-student,
+.user-card-item:hover .role-badge-student {
+  background: #ddd6fe;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(139, 92, 246, 0.25);
+}
+
+.stat-hover-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.stat-hover-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.stat-hover-card:hover .stat-icon {
+  transform: scale(1.15) rotate(5deg);
+}
+
+.stat-icon {
+  transition: transform 0.3s ease;
+}
+
+/* User Grid Card View Hover Effects */
+.user-card-item {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.user-card-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.08), 0 4px 8px -4px rgba(0, 0, 0, 0.04);
+  border-color: rgba(59, 130, 246, 0.35);
+}
+
+.user-card-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--student-primary));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.user-card-item:hover::after {
+  opacity: 1;
+}
+
+.user-card-item:hover .user-avatar {
+  transform: scale(1.1) rotate(2deg);
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -192,3 +384,4 @@ input:focus, select:focus, textarea:focus {
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+

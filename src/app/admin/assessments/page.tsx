@@ -10,7 +10,11 @@ import {
   CheckCircle2,
   HelpCircle,
   FileText,
-  Send
+  Send,
+  List,
+  LayoutGrid,
+  Layers,
+  Award
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
@@ -40,6 +44,9 @@ export default function AdminAssessments() {
   const [showModal, setShowModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showAll, setShowAll] = useState(false);
+  const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
   const [editingAssessment, setEditingAssessment] = useState<Assessment | null>(null);
   const [selectedAssessment, setSelectedAssessment] = useState<Assessment | null>(null);
   
@@ -64,7 +71,6 @@ export default function AdminAssessments() {
     try {
       const response = await fetch('http://localhost:3001/assessments');
       const data = await response.json();
-      // Admin sees all assessments
       setAssessments(data.reverse());
     } catch (err) {
       console.error('Error fetching assessments:', err);
@@ -76,7 +82,6 @@ export default function AdminAssessments() {
   useEffect(() => {
     fetchAssessments();
     
-    // Fetch students for assign dropdown
     const getStudents = async () => {
       try {
         const res = await fetch('http://localhost:3001/users?role=student');
@@ -177,21 +182,40 @@ export default function AdminAssessments() {
     });
   };
 
-  const filtered = assessments.filter(a => 
-    a.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    a.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Stats calculation
+  const totalAssessments = assessments.length;
+  const quizCount = assessments.filter(a => a.type === 'Quiz').length;
+  const testCount = assessments.filter(a => a.type === 'Test' || a.type === 'Exam').length;
+  const surveyCount = assessments.filter(a => a.type === 'Survey').length;
+
+  const stats = [
+    { label: 'Total Repository', value: totalAssessments, icon: BookOpen, color: '#3b82f6', filterKey: 'all' },
+    { label: 'Quizzes', value: quizCount, icon: Layers, color: '#10b981', filterKey: 'Quiz' },
+    { label: 'Tests & Exams', value: testCount, icon: Award, color: '#8b5cf6', filterKey: 'Test' },
+    { label: 'Surveys', value: surveyCount, icon: FileText, color: '#f59e0b', filterKey: 'Survey' },
+  ];
+
+  const filtered = assessments.filter(a => {
+    const matchesSearch = a.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          a.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          a.topic.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = typeFilter === 'all' || 
+                        (typeFilter === 'Test' ? (a.type === 'Test' || a.type === 'Exam') : a.type === typeFilter);
+    return matchesSearch && matchesType;
+  });
+
+  const displayedAssessments = showAll ? filtered : filtered.slice(0, 3);
 
   return (
     <div className="animate-premium">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-            <span style={{ padding: '0.4rem 0.8rem', background: 'rgba(59, 130, 246, 0.1)', color: 'var(--admin-primary)', borderRadius: '2rem', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em' }}>
-              ADMIN STUDIO
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+            <span style={{ padding: '0.25rem 0.6rem', background: 'rgba(59, 130, 246, 0.1)', color: 'var(--admin-primary)', borderRadius: '2rem', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.05em' }}>
+              ADMIN DASHBOARD
             </span>
           </div>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-1px', marginBottom: '0.5rem' }}>Manage Assessment</h1>
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 800, letterSpacing: '-0.5px', margin: 0 }}>Manage Assessment</h1>
         </div>
         <button 
           onClick={() => setShowModal(true)}
@@ -199,139 +223,295 @@ export default function AdminAssessments() {
           style={{ 
             display: 'flex', 
             alignItems: 'center', 
-            gap: '0.75rem', 
+            gap: '0.5rem', 
+            padding: '0.55rem 1.1rem',
+            fontSize: '0.85rem',
             background: 'var(--admin-primary)',
-            boxShadow: '0 10px 20px -5px rgba(59, 130, 246, 0.4)'
+            boxShadow: '0 8px 16px -4px rgba(59, 130, 246, 0.4)'
           }}
         >
-          <Plus size={20} />
-          Launch New
+          <Plus size={18} />
+          Create Assessments
         </button>
       </div>
 
-      <div className="premium-card" style={{ padding: '1.25rem', marginBottom: '2.5rem', display: 'flex', gap: '1.5rem', alignItems: 'center', background: '#f8fafc' }}>
-        <div style={{ position: 'relative', flex: 1 }}>
-          <Search size={20} style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
-          <input 
-            placeholder="Search all global assessments by title, category or topic..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ 
-              width: '100%',
-              padding: '0.85rem 1rem 0.85rem 3.5rem', 
-              borderRadius: '1rem',
-              border: '1px solid #e2e8f0',
-              background: 'white',
-              fontSize: '0.95rem'
-            }}
-          />
-        </div>
-        <div style={{ height: '30px', width: '1px', background: '#e2e8f0' }} />
-        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', color: 'var(--muted-foreground)' }}>
-          <Search size={18} />
-          <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>Showing {filtered.length} Global Records</span>
-        </div>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(1, 1fr)', gap: '1.25rem' }}>
-        {loading ? (
-          <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--muted-foreground)' }}>Loading global repository...</div>
-        ) : filtered.length === 0 ? (
-          <div className="premium-card" style={{ padding: '5rem', textAlign: 'center' }}>
-             <BookOpen size={64} style={{ color: 'var(--muted)', marginBottom: '1.5rem', opacity: 0.2 }} />
-             <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>No Records Found</h3>
-             <p style={{ color: 'var(--muted-foreground)', marginBottom: '2rem' }}>The global assessment repository is currently empty.</p>
-             <button onClick={() => setShowModal(true)} className="btn-secondary" style={{ border: 'none', background: 'rgba(59, 130, 246, 0.1)', color: 'var(--admin-primary)', fontWeight: 700 }}>
-                Initialize First Protocol
-             </button>
-          </div>
-        ) : (
-          filtered.map((a, idx) => (
-            <motion.div 
-              key={a.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05 }}
-              className="premium-card" 
-              style={{ display: 'flex', alignItems: 'center', gap: '2rem', padding: '1.75rem 2rem' }}
-            >
-              <div style={{ 
-                width: '60px', height: '60px', 
-                background: 'rgba(59, 130, 246, 0.1)', 
-                color: 'var(--admin-primary)', 
-                borderRadius: '1.25rem', 
+      {/* Summary Stats Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+        {stats.map((stat) => {
+          const Icon = stat.icon;
+          const isSelected = typeFilter === stat.filterKey;
+          return (
+            <div 
+              key={stat.label} 
+              onClick={() => setTypeFilter(typeFilter === stat.filterKey ? 'all' : stat.filterKey)}
+              className="premium-card stat-hover-card" 
+              style={{ 
+                padding: '0.85rem 1rem',
                 display: 'flex', 
                 alignItems: 'center', 
-                justifyContent: 'center',
-                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
-              }}>
-                <FileText size={28} />
+                gap: '1rem',
+                border: isSelected ? `2px solid ${stat.color}` : '1px solid var(--card-border)',
+                background: isSelected ? `${stat.color}08` : 'white',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <div 
+                style={{ 
+                  background: `${stat.color}15`, 
+                  color: stat.color, 
+                  padding: '0.65rem', 
+                  borderRadius: '0.75rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}
+              >
+                <Icon size={20} />
               </div>
-              
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem' }}>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 700, letterSpacing: '-0.3px' }}>{a.title}</h3>
-                  <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.6rem', background: '#f1f5f9', borderRadius: '1rem', fontWeight: 600, color: 'var(--secondary)' }}>{a.type}</span>
-                </div>
-                <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-                  <p style={{ fontSize: '0.9rem', color: 'var(--muted-foreground)', fontWeight: 500 }}>{a.topic || 'General Topic'}</p>
-                  <div style={{ height: '4px', width: '4px', borderRadius: '50%', background: '#cbd5e1' }} />
-                  <p style={{ fontSize: '0.85rem', color: 'var(--muted)', fontWeight: 500 }}>Created: {a.date}</p>
-                </div>
+              <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                <p style={{ fontSize: '0.78rem', color: 'var(--muted-foreground)', marginBottom: '0.1rem', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{stat.label}</p>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, lineHeight: 1.2 }}>{stat.value}</h3>
               </div>
+            </div>
+          );
+        })}
+      </div>
 
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                {a.questionFormats.slice(0, 3).map(f => (
-                  <span key={f} style={{ 
-                    fontSize: '0.7rem', padding: '0.3rem 0.75rem', background: 'white', 
-                    borderRadius: '2rem', border: '1px solid var(--card-border)', fontWeight: 600, color: 'var(--secondary)'
-                  }}>
-                    {f.replace(/([A-Z])/g, ' $1').trim()}
-                  </span>
+      {/* Unified Table Container (matching User Management table format) */}
+      <div className="premium-card" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--card-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ minWidth: 0 }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.15rem' }}>Global Assessments</h3>
+            <p style={{ fontSize: '0.8rem', color: 'var(--muted-foreground)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Create, manage and assign assessments.</p>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--muted-foreground)' }}>Showing {displayedAssessments.length} of {filtered.length}</span>
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="btn-secondary"
+              style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', color: 'var(--admin-primary)', fontWeight: 700, whiteSpace: 'nowrap', cursor: 'pointer' }}
+            >
+              {showAll ? 'Minimize' : 'See All'}
+            </button>
+          </div>
+        </div>
+
+        {/* Embedded Controls Bar (Search + View Switcher) */}
+        <div style={{ padding: '0.65rem 1.25rem', background: '#f8fafc', display: 'flex', gap: '0.85rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+          <div style={{ position: 'relative', flex: '1 1 240px', minWidth: '200px' }}>
+            <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
+            <input
+              placeholder="Search all global assessments by title, category or topic..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '0.75rem 0.75rem 0.75rem 2.75rem',
+                borderRadius: '0.75rem',
+                border: '1px solid #e2e8f0',
+                background: 'white',
+                fontSize: '0.9rem'
+              }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            {/* View Mode Switcher */}
+            <div style={{ display: 'flex', background: 'white', padding: '0.25rem', borderRadius: '0.75rem', border: '1px solid #e2e8f0' }}>
+              <button
+                onClick={() => setViewMode('table')}
+                title="Table View"
+                style={{
+                  padding: '0.35rem 0.6rem',
+                  borderRadius: '0.5rem',
+                  background: viewMode === 'table' ? '#f1f5f9' : 'transparent',
+                  color: viewMode === 'table' ? 'var(--admin-primary)' : 'var(--muted-foreground)',
+                  border: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <List size={16} />
+              </button>
+              <button
+                onClick={() => setViewMode('grid')}
+                title="Grid Card View"
+                style={{
+                  padding: '0.35rem 0.6rem',
+                  borderRadius: '0.5rem',
+                  background: viewMode === 'grid' ? '#f1f5f9' : 'transparent',
+                  color: viewMode === 'grid' ? 'var(--admin-primary)' : 'var(--muted-foreground)',
+                  border: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <LayoutGrid size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ padding: '0 1.5rem 1.5rem', overflowX: 'auto' }}>
+          {loading ? (
+            <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--muted-foreground)' }}>Loading global repository...</div>
+          ) : filtered.length === 0 ? (
+            <div style={{ padding: '3rem', textAlign: 'center' }}>
+              <BookOpen size={40} style={{ color: 'var(--muted)', marginBottom: '1rem', opacity: 0.3 }} />
+              <p style={{ color: 'var(--muted-foreground)', marginBottom: '1rem' }}>No records found in global repository.</p>
+              <button onClick={() => setShowModal(true)} className="btn-secondary" style={{ border: 'none', background: 'rgba(59, 130, 246, 0.1)', color: 'var(--admin-primary)', fontWeight: 700 }}>
+                Create First Assessment
+              </button>
+            </div>
+          ) : viewMode === 'table' ? (
+            <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 0.75rem' }}>
+              <thead>
+                <tr style={{ textAlign: 'left', color: 'var(--muted)', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  <th style={{ padding: '0 0.75rem' }}>Title</th>
+                  <th style={{ padding: '0 0.75rem' }}>Type</th>
+                  <th style={{ padding: '0 0.75rem' }}>Question Formats</th>
+                  <th style={{ padding: '0 0.75rem', textAlign: 'right' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {displayedAssessments.map((a) => (
+                  <tr
+                    key={a.id}
+                    className="report-row-premium"
+                    style={{ background: '#f8fafc', borderRadius: '0.75rem', transition: 'all 0.2s' }}
+                  >
+                    <td style={{ padding: '1rem 0.75rem', borderRadius: '0.75rem 0 0 0.75rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{ width: '36px', height: '36px', flexShrink: 0, background: 'white', border: '1px solid #e2e8f0', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--admin-primary)' }}>
+                          <FileText size={18} />
+                        </div>
+                        <div style={{ minWidth: 0 }}>
+                          <p style={{ fontWeight: 700, fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', margin: 0 }}>{a.title}</p>
+                          <p style={{ fontSize: '0.7rem', color: 'var(--muted)', margin: 0 }}>{a.topic || 'General Topic'} • Created: {a.date}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td style={{ padding: '1rem 0.75rem' }}>
+                      <span style={{ fontSize: '0.75rem', padding: '0.2rem 0.6rem', background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', fontWeight: 600, color: 'var(--secondary)' }}>{a.type}</span>
+                    </td>
+                    <td style={{ padding: '1rem 0.75rem' }}>
+                      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                        {a.questionFormats.slice(0, 3).map(f => (
+                          <span key={f} style={{
+                            fontSize: '0.7rem', padding: '0.2rem 0.6rem', background: 'white',
+                            borderRadius: '2rem', border: '1px solid var(--card-border)', fontWeight: 600, color: 'var(--secondary)'
+                          }}>
+                            {f.replace(/([A-Z])/g, ' $1').trim()}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td style={{ padding: '1rem 0.75rem', borderRadius: '0 0.75rem 0.75rem 0', textAlign: 'right' }}>
+                      <div style={{ display: 'inline-flex', gap: '0.5rem' }}>
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => { setSelectedAssessment(a); setShowAssignModal(true); }}
+                          style={{
+                            width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(59, 130, 246, 0.1)',
+                            color: 'var(--admin-primary)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+                          }}
+                          title="Assign Assessment"
+                        >
+                          <Send size={16} />
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => openEdit(a)}
+                          style={{
+                            width: '36px', height: '36px', borderRadius: '10px', background: 'white',
+                            color: 'var(--secondary)', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+                          }}
+                          title="Edit"
+                        >
+                          <Edit size={16} />
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.1, background: '#fee2e2' }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => handleDelete(a.id)}
+                          style={{
+                            width: '36px', height: '36px', borderRadius: '10px', background: '#fff1f2',
+                            color: 'var(--destructive)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
+                          }}
+                          title="Delete"
+                        >
+                          <Trash2 size={16} />
+                        </motion.button>
+                      </div>
+                    </td>
+                  </tr>
                 ))}
-              </div>
+              </tbody>
+            </table>
+          ) : (
+            /* Grid Card View */
+            <div style={{ padding: '1rem 0', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
+              {displayedAssessments.map((a) => (
+                <div key={a.id} className="user-card-item" style={{ padding: '1.1rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '0.75rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+                    <div style={{ width: '38px', height: '38px', borderRadius: '8px', background: 'rgba(59, 130, 246, 0.1)', color: 'var(--admin-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <FileText size={20} />
+                    </div>
+                    <span style={{ fontSize: '0.75rem', padding: '0.25rem 0.65rem', background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', fontWeight: 600, color: 'var(--secondary)' }}>
+                      {a.type}
+                    </span>
+                  </div>
 
-              <div style={{ width: '1px', height: '40px', background: '#f1f5f9', margin: '0 0.5rem' }} />
+                  <h3 style={{ fontSize: '0.98rem', fontWeight: 700, marginBottom: '0.2rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{a.title}</h3>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--muted-foreground)', marginBottom: '0.85rem' }}>{a.topic || 'General Topic'}</p>
 
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <motion.button 
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => { setSelectedAssessment(a); setShowAssignModal(true); }}
-                  style={{ 
-                    width: '44px', height: '44px', borderRadius: '12px', background: 'rgba(59, 130, 246, 0.1)', 
-                    color: 'var(--admin-primary)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
-                  }}
-                  title="Global Assignment"
-                >
-                  <Send size={18} />
-                </motion.button>
-                <motion.button 
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => openEdit(a)} 
-                  style={{ 
-                    width: '44px', height: '44px', borderRadius: '12px', background: '#f8fafc', 
-                    color: 'var(--secondary)', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
-                  }}
-                >
-                  <Edit size={18} />
-                </motion.button>
-                <motion.button 
-                  whileHover={{ scale: 1.1, background: '#fee2e2' }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => handleDelete(a.id)} 
-                  style={{ 
-                    width: '44px', height: '44px', borderRadius: '12px', background: '#fff1f2', 
-                    color: 'var(--destructive)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
-                  }}
-                >
-                  <Trash2 size={18} />
-                </motion.button>
-              </div>
-            </motion.div>
-          ))
-        )}
+                  <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap', marginBottom: '0.85rem' }}>
+                    {a.questionFormats.slice(0, 3).map(f => (
+                      <span key={f} style={{ fontSize: '0.68rem', padding: '0.15rem 0.5rem', background: 'white', border: '1px solid #e2e8f0', borderRadius: '1rem', fontWeight: 600 }}>
+                        {f.replace(/([A-Z])/g, ' $1').trim()}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '0.75rem', borderTop: '1px solid #e2e8f0' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>{a.date}</span>
+                    <div style={{ display: 'flex', gap: '0.35rem' }}>
+                      <button 
+                        onClick={() => { setSelectedAssessment(a); setShowAssignModal(true); }}
+                        className="user-action-btn edit"
+                        title="Assign"
+                      >
+                        <Send size={16} />
+                      </button>
+                      <button 
+                        onClick={() => openEdit(a)}
+                        className="user-action-btn edit"
+                        title="Edit"
+                      >
+                        <Edit size={16} />
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(a.id)}
+                        className="user-action-btn delete"
+                        title="Delete"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Assign Modal */}
@@ -357,7 +537,7 @@ export default function AdminAssessments() {
                 }}>
                   <Send size={30} />
                 </div>
-                <h2 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.5px', marginBottom: '0.5rem' }}>Global Protocol</h2>
+                <h2 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.5px', marginBottom: '0.5rem' }}>Assign Assessment</h2>
                 <p style={{ color: 'var(--muted-foreground)', fontSize: '1rem', fontWeight: 500 }}>{selectedAssessment?.title}</p>
               </div>
 
@@ -414,7 +594,7 @@ export default function AdminAssessments() {
                   className="btn-primary" 
                   style={{ flex: 2, background: 'var(--admin-primary)', fontWeight: 800 }}
                 >
-                  Initialize Protocol
+                  Assign Assessment
                 </button>
               </div>
             </motion.div>
@@ -437,13 +617,13 @@ export default function AdminAssessments() {
               style={{ width: '100%', maxWidth: '840px', maxHeight: '90vh', overflowY: 'auto', padding: '3.5rem' }}
             >
               <div style={{ marginBottom: '3rem' }}>
-                 <h2 style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.8px', marginBottom: '0.5rem' }}>{editingAssessment ? 'Update Protocol' : 'Create Assessment'}</h2>
-                 <p style={{ color: 'var(--muted-foreground)', fontSize: '1rem' }}>Configure global structural details and administrative assessment content.</p>
+                 <h2 style={{ fontSize: '2rem', fontWeight: 800, letterSpacing: '-0.8px', marginBottom: '0.5rem' }}>{editingAssessment ? 'Update Assessment' : 'Create Assessment'}</h2>
+                 <p style={{ color: 'var(--muted-foreground)', fontSize: '1rem' }}>Configure assessment details and content.</p>
               </div>
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '2.5rem' }}>
                 <div style={{ gridColumn: 'span 2' }}>
-                  <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.75rem', fontWeight: 700, color: 'var(--secondary)', textTransform: 'uppercase' }}>Conceptual Title</label>
+                  <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.75rem', fontWeight: 700, color: 'var(--secondary)', textTransform: 'uppercase' }}>Title</label>
                   <input style={{ padding: '1rem', width: '100%', borderRadius: '1rem', border: '1px solid #e2e8f0' }} value={title} onChange={e => setTitle(e.target.value)} placeholder="Ex. Final Semester Coding Exam" />
                 </div>
                 
@@ -506,14 +686,14 @@ export default function AdminAssessments() {
               <div style={{ marginBottom: '3rem', borderTop: '1px solid #f1f5f9', paddingTop: '3rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
                   <div>
-                    <h3 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Question Architecture</h3>
-                    <p style={{ fontSize: '0.9rem', color: 'var(--muted-foreground)', marginTop: '0.2rem' }}>Define individual challenges for this global protocol.</p>
+                    <h3 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Question Types</h3>
+                    <p style={{ fontSize: '0.9rem', color: 'var(--muted-foreground)', marginTop: '0.2rem' }}>Add questions for this assessment.</p>
                   </div>
                   <button 
                     onClick={() => setQuestions([...questions, { id: Date.now(), text: '', type: 'MCQ', options: ['', '', '', ''], correctAnswer: 0 }])}
                     className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--admin-primary)', padding: '0.75rem 1.25rem' }}
                   >
-                    <Plus size={20} /> Add Challenge
+                    <Plus size={20} /> Create Questions
                   </button>
                 </div>
 
@@ -631,19 +811,25 @@ export default function AdminAssessments() {
               </div>
 
               <div style={{ display: 'flex', gap: '1.25rem', justifyContent: 'flex-end', borderTop: '1px solid #f1f5f9', paddingTop: '3rem' }}>
-                <button onClick={closeModal} className="btn-secondary" style={{ padding: '0.85rem 2rem', fontWeight: 700, border: 'none', background: '#f1f5f9' }}>Close Studio</button>
+                <button onClick={closeModal} className="btn-secondary" style={{ padding: '0.85rem 2rem', fontWeight: 700, border: 'none', background: '#f1f5f9' }}>Close</button>
                 <button 
                   onClick={handleSave} 
                   className="btn-primary" 
                   style={{ padding: '0.85rem 3rem', background: 'var(--admin-primary)', fontWeight: 800, boxShadow: '0 10px 20px -5px rgba(59, 130, 246, 0.4)' }}
                 >
-                  {editingAssessment ? 'Confirm Protocol Update' : 'Initialize Global Protocol'}
+                  {editingAssessment ? 'Update Assessment' : 'Create Assessment'}
                 </button>
               </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
+      <style jsx>{`
+        .report-row-premium:hover {
+          background-color: #f8fafc;
+          transform: translateX(4px);
+        }
+      `}</style>
     </div>
   );
 }

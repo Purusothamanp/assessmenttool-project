@@ -27,14 +27,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Check for persisted session
-    const storedUser = localStorage.getItem('assessment_user');
-    if (storedUser) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
-  }, []);
+    // Check for persisted session and verify status
+    const checkUserStatus = async () => {
+      const storedUser = localStorage.getItem('assessment_user');
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          const response = await fetch(`http://localhost:3001/users/${parsedUser.id}`);
+          if (response.ok) {
+            const dbUser = await response.json();
+            if (dbUser.status === 'inactive') {
+              localStorage.removeItem('assessment_user');
+              setUser(null);
+              router.push('/login');
+              setIsLoading(false);
+              return;
+            }
+          }
+          setUser(parsedUser);
+        } catch (err) {
+          setUser(JSON.parse(storedUser));
+        }
+      }
+      setIsLoading(false);
+    };
+
+    checkUserStatus();
+  }, [router]);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
@@ -51,7 +70,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const dbUser = users[0];
 
-      // 2. Check password
+      // 2. Check if account is active
+      if (dbUser.status === 'inactive') {
+        throw new Error('Your account is currently inactive. Please contact an administrator.');
+      }
+
+      // 3. Check password
       if (dbUser.password !== password) {
         throw new Error('Invalid password. Please try again.');
       }

@@ -8,9 +8,7 @@ import {
   LayoutDashboard, 
   BookOpen, 
   CheckSquare, 
-  LogOut,
-  User as UserIcon,
-  Bell
+  LogOut
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { motion } from 'framer-motion';
@@ -22,6 +20,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
@@ -38,7 +37,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   if (!mounted || isLoading || !user || user.role !== 'student') {
     return (
       <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ color: 'var(--muted-foreground)' }}>Loading portal...</p>
+        <p style={{ color: 'var(--muted-foreground)' }}>Loading dashboard...</p>
       </div>
     );
   }

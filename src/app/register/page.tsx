@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Mail, Lock, User, UserPlus, Shield, BookOpen, GraduationCap, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, User, UserPlus, Shield, BookOpen, GraduationCap, ArrowLeft, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
 type UserRole = 'admin' | 'educator' | 'student';
@@ -23,9 +23,9 @@ export default function RegisterPage() {
       setError('Please fill in all fields');
       return;
     }
-    
+
     const normalizedEmail = email.trim().toLowerCase();
-    
+
     setIsLoading(true);
     setError('');
 
@@ -33,7 +33,7 @@ export default function RegisterPage() {
       // 1. Check if user already exists
       const checkResponse = await fetch(`http://localhost:3001/users?email=${encodeURIComponent(normalizedEmail)}`);
       const existingUsers = await checkResponse.json();
-      
+
       if (existingUsers && existingUsers.length > 0) {
         setError('This email is already registered. Please sign in.');
         setIsLoading(false);
@@ -87,38 +87,38 @@ export default function RegisterPage() {
     }}>
       {/* Ethereal Aurora Background (Shared Light Theme) */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', zIndex: 0 }}>
-        <motion.div 
-          animate={{ 
+        <motion.div
+          animate={{
             scale: [1, 1.3, 1],
             x: [0, 80, 0],
             y: [0, 40, 0]
           }}
           transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-          style={{ 
-            position: 'absolute', top: '-10%', left: '-5%', width: '60%', height: '60%', 
-            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%)', filter: 'blur(100px)' 
-          }} 
+          style={{
+            position: 'absolute', top: '-10%', left: '-5%', width: '60%', height: '60%',
+            background: 'radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%)', filter: 'blur(100px)'
+          }}
         />
-        <motion.div 
-          animate={{ 
+        <motion.div
+          animate={{
             scale: [1.3, 1, 1.3],
             x: [0, -80, 0],
             y: [0, -40, 0]
           }}
           transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
-          style={{ 
-            position: 'absolute', bottom: '-10%', right: '-5%', width: '60%', height: '60%', 
-            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%)', filter: 'blur(100px)' 
-          }} 
+          style={{
+            position: 'absolute', bottom: '-10%', right: '-5%', width: '60%', height: '60%',
+            background: 'radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%)', filter: 'blur(100px)'
+          }}
         />
       </div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="premium-card"
-        style={{ 
+        style={{
           width: '100%', maxWidth: '540px', padding: '3.5rem', zIndex: 1,
           background: 'rgba(255, 255, 255, 0.7)',
           backdropFilter: 'blur(20px)',
@@ -127,11 +127,11 @@ export default function RegisterPage() {
           borderRadius: '2.5rem'
         }}
       >
-        <Link 
-          href="/login" 
-          style={{ 
-            display: 'inline-flex', alignItems: 'center', gap: '0.5rem', 
-            color: '#64748b', fontSize: '0.9rem', 
+        <Link
+          href="/login"
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+            color: '#64748b', fontSize: '0.9rem',
             textDecoration: 'none', marginBottom: '2rem', fontWeight: 700, transition: 'all 0.3s'
           }}
           onMouseEnter={(e) => (e.currentTarget.style.color = '#3b82f6')}
@@ -142,9 +142,9 @@ export default function RegisterPage() {
         </Link>
 
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-          <div style={{ 
+          <div style={{
             width: '80px', height: '80px', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 2rem', color: 'white', 
+            margin: '0 auto 2rem', color: 'white',
             background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
             boxShadow: '0 15px 30px -5px rgba(59, 130, 246, 0.4)'
           }}>
@@ -156,7 +156,7 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '2rem' }}>
-            <p style={{ fontSize: '0.8rem', fontWeight: 800, marginBottom: '1.25rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Choose Designation</p>
+            <p style={{ fontSize: '0.8rem', fontWeight: 800, marginBottom: '1.25rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Choose Role</p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
               {roles.map((r) => {
                 const Icon = r.icon;
@@ -177,7 +177,7 @@ export default function RegisterPage() {
                     }}
                   >
                     <Icon size={24} color={isSelected ? r.color : '#cbd5e1'} />
-                    <span style={{ 
+                    <span style={{
                       fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.02em',
                       color: isSelected ? r.color : '#64748b'
                     }}>{r.label}</span>
@@ -193,12 +193,12 @@ export default function RegisterPage() {
               <User size={20} style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: '#cbd5e1' }} />
               <input
                 type="text"
-                placeholder="Designate Full Name"
+                placeholder="Full Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                style={{ 
-                  padding: '1.1rem 1.25rem 1.1rem 3.5rem', width: '100%', 
-                  background: 'white', border: '1px solid #f1f5f9', 
+                style={{
+                  padding: '1.1rem 1.25rem 1.1rem 3.5rem', width: '100%',
+                  background: 'white', border: '1px solid #f1f5f9',
                   borderRadius: '1.25rem', color: '#1e293b', fontSize: '1.1rem', outline: 'none',
                   boxShadow: '0 2px 4px rgba(0,0,0,0.01) inset', transition: 'all 0.3s'
                 }}
@@ -206,19 +206,18 @@ export default function RegisterPage() {
               />
             </div>
           </div>
-
           <div style={{ marginBottom: '1.5rem' }}>
             <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase' }}>Email Address</label>
             <div style={{ position: 'relative' }}>
               <Mail size={20} style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: '#cbd5e1' }} />
               <input
                 type="email"
-                placeholder="identity@domain.com"
+                placeholder="email@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                style={{ 
-                  padding: '1.1rem 1.25rem 1.1rem 3.5rem', width: '100%', 
-                  background: 'white', border: '1px solid #f1f5f9', 
+                style={{
+                  padding: '1.1rem 1.25rem 1.1rem 3.5rem', width: '100%',
+                  background: 'white', border: '1px solid #f1f5f9',
                   borderRadius: '1.25rem', color: '#1e293b', fontSize: '1.1rem', outline: 'none',
                   boxShadow: '0 2px 4px rgba(0,0,0,0.01) inset', transition: 'all 0.3s'
                 }}
@@ -228,7 +227,7 @@ export default function RegisterPage() {
           </div>
 
           <div style={{ marginBottom: '2.5rem' }}>
-            <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase' }}>Security Key</label>
+            <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase' }}>Password</label>
             <div style={{ position: 'relative' }}>
               <Lock size={20} style={{ position: 'absolute', left: '1.25rem', top: '50%', transform: 'translateY(-50%)', color: '#cbd5e1' }} />
               <input
@@ -236,9 +235,9 @@ export default function RegisterPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                style={{ 
-                  padding: '1.1rem 1.25rem 1.1rem 3.5rem', width: '100%', 
-                  background: 'white', border: '1px solid #f1f5f9', 
+                style={{
+                  padding: '1.1rem 1.25rem 1.1rem 3.5rem', width: '100%',
+                  background: 'white', border: '1px solid #f1f5f9',
                   borderRadius: '1.25rem', color: '#1e293b', fontSize: '1.1rem', outline: 'none',
                   boxShadow: '0 2px 4px rgba(0,0,0,0.01) inset', transition: 'all 0.3s'
                 }}
@@ -246,11 +245,10 @@ export default function RegisterPage() {
               />
             </div>
           </div>
-
           {error && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-              style={{ 
+              style={{
                 color: '#ef4444', fontSize: '0.95rem', marginBottom: '2rem', textAlign: 'center',
                 padding: '1rem', background: '#fef2f2',
                 borderRadius: '1rem', border: '1px solid #fee2e2', fontWeight: 600
@@ -260,12 +258,12 @@ export default function RegisterPage() {
             </motion.div>
           )}
 
-          <motion.button 
+          <motion.button
             whileHover={{ scale: 1.02, boxShadow: '0 15px 30px -5px rgba(59, 130, 246, 0.4)' }}
             whileTap={{ scale: 0.98 }}
-            type="submit" 
-            className="btn-primary" 
-            style={{ 
+            type="submit"
+            className="btn-primary"
+            style={{
               width: '100%', padding: '1.25rem', borderRadius: '1.25rem', fontSize: '1.1rem', fontWeight: 800,
               background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)', border: 'none',
               boxShadow: '0 10px 20px -5px rgba(37, 99, 235, 0.3)'
@@ -276,7 +274,7 @@ export default function RegisterPage() {
           </motion.button>
 
           <p style={{ textAlign: 'center', marginTop: '2.5rem', fontSize: '1rem', color: '#64748b', fontWeight: 500 }}>
-            Existing Identity? <Link href="/login" style={{ color: '#3b82f6', fontWeight: 700, textDecoration: 'none' }}>Sign-in</Link>
+            Already have an account? <Link href="/login" style={{ color: '#3b82f6', fontWeight: 700, textDecoration: 'none' }}>Log in</Link>
           </p>
         </form>
       </motion.div>

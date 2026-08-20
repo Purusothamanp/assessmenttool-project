@@ -3,15 +3,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Users, 
-  CheckCircle, 
   Search, 
-  Download,
   TrendingUp,
   Edit3,
   X,
   CheckCircle2,
   AlertCircle,
-  Clock
+  Clock,
+  List,
+  LayoutGrid
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
@@ -38,10 +38,9 @@ export default function StudentResults() {
   const { user } = useAuth();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [stats, setStats] = useState([
-    { label: 'Total Submissions', value: '0', icon: Users, color: '#3b82f6' },
-    { label: 'Avg. Score', value: '0%', icon: TrendingUp, color: '#10b981' },
-  ]);
+  const [showAll, setShowAll] = useState(false);
+  const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   
   // Valuation Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -73,16 +72,6 @@ export default function StudentResults() {
       );
       
       setSubmissions(mySubmissions.reverse());
-
-      // Calculate Stats
-      const avgScore = mySubmissions.length > 0
-        ? Math.round(mySubmissions.reduce((acc: number, curr: Submission) => acc + curr.score, 0) / mySubmissions.length)
-        : 0;
-
-      setStats([
-        { label: 'Total Submissions', value: mySubmissions.length.toString(), icon: Users, color: '#3b82f6' },
-        { label: 'Avg. Score', value: `${avgScore}%`, icon: TrendingUp, color: '#10b981' },
-      ]);
     } catch (err) {
       console.error('Error fetching results:', err);
     }
@@ -101,7 +90,6 @@ export default function StudentResults() {
         const data = await response.json();
         if (data) {
           setEvaluatingAssessment(data);
-          // Pre-populate manual marks for MCQs based on auto-correct if needed
           const initialMarks: Record<string, boolean> = {};
           data.questions?.forEach((q: any) => {
             if (q.type === 'MCQ') {
@@ -153,137 +141,328 @@ export default function StudentResults() {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (user) fetchResults();
   }, [user, fetchResults]);
 
-  const filtered = submissions.filter(s => 
-    s.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    s.assessmentTitle.toLowerCase().includes(searchTerm.toLowerCase())
-  ).sort((a, b) => {
-    // Priority 1: Submitted ones come first
+  // Compute stats dynamically
+  const totalCount = submissions.length;
+  const avgScore = totalCount > 0
+    ? Math.round(submissions.reduce((acc, curr) => acc + curr.score, 0) / totalCount)
+    : 0;
+  const passedCount = submissions.filter(s => s.status === 'Passed' || s.score >= 50).length;
+  const pendingCount = submissions.filter(s => s.status === 'Pending' || s.status === 'Submitted').length;
+
+  const stats = [
+    { label: 'Total Submissions', value: totalCount.toString(), icon: Users, color: '#059669', filterKey: 'all' },
+    { label: 'Average Score', value: `${avgScore}%`, icon: TrendingUp, color: '#10b981', filterKey: 'all' },
+    { label: 'Passed Evaluations', value: passedCount.toString(), icon: CheckCircle2, color: '#8b5cf6', filterKey: 'Passed' },
+    { label: 'Pending Evaluations', value: pendingCount.toString(), icon: Clock, color: '#f59e0b', filterKey: 'Pending' },
+  ];
+
+  const filtered = submissions.filter(s => {
+    const matchesSearch = s.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          s.assessmentTitle.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' ||
+                          (statusFilter === 'Pending' ? (s.status === 'Pending' || s.status === 'Submitted') : s.status === statusFilter);
+    return matchesSearch && matchesStatus;
+  }).sort((a, b) => {
     if (a.status === 'Submitted' && b.status !== 'Submitted') return -1;
     if (a.status !== 'Submitted' && b.status === 'Submitted') return 1;
-    // Priority 2: Newest date first
     return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
+
+  const displayedSubmissions = showAll ? filtered : filtered.slice(0, 3);
 
   if (!hasMounted) return null;
 
   return (
-    <div className="animate-fade-in">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+    <div className="animate-premium">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.25rem' }}>Student Progress</h1>
-          <p style={{ color: 'var(--muted-foreground)' }}>Review assessment performance and provide student feedback.</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+            <span style={{ padding: '0.25rem 0.6rem', background: 'var(--educator-accent)', color: 'var(--educator-primary)', borderRadius: '2rem', fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.05em' }}>
+              EVALUATION DASHBOARD
+            </span>
+          </div>
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 800, letterSpacing: '-0.5px', margin: 0 }}>Student Progress</h1>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '2.5rem' }}>
-        {stats.map((stat, i) => {
+      {/* Summary Stats Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.25rem' }}>
+        {stats.map((stat) => {
           const Icon = stat.icon;
+          const isSelected = statusFilter === stat.filterKey;
           return (
-            <motion.div 
-              key={stat.label}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="card" 
-              style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}
+            <div 
+              key={stat.label} 
+              onClick={() => setStatusFilter(statusFilter === stat.filterKey ? 'all' : stat.filterKey)}
+              className="premium-card stat-hover-card" 
+              style={{ 
+                padding: '0.85rem 1rem',
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '1rem',
+                border: isSelected ? `2px solid ${stat.color}` : '1px solid var(--card-border)',
+                background: isSelected ? `${stat.color}08` : 'white',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
             >
-              <div style={{ background: `${stat.color}15`, color: stat.color, padding: '0.75rem', borderRadius: '1rem' }}>
-                <Icon size={24} />
+              <div 
+                style={{ 
+                  background: `${stat.color}15`, 
+                  color: stat.color, 
+                  padding: '0.65rem', 
+                  borderRadius: '0.75rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}
+              >
+                <Icon size={20} />
               </div>
-              <div>
-                <p style={{ fontSize: '0.85rem', color: 'var(--muted-foreground)' }}>{stat.label}</p>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 700 }}>{stat.value}</h3>
+              <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                <p style={{ fontSize: '0.78rem', color: 'var(--muted-foreground)', marginBottom: '0.1rem', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{stat.label}</p>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, lineHeight: 1.2 }}>{stat.value}</h3>
               </div>
-            </motion.div>
+            </div>
           );
         })}
       </div>
 
-      <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
-        <div style={{ padding: '1.25rem', borderBottom: '1px solid var(--card-border)', display: 'flex', gap: '1rem' }}>
-          <div style={{ position: 'relative', flex: 1 }}>
-            <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
-            <input 
-              placeholder="Search by student name or assessment..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ paddingLeft: '2.75rem', background: 'var(--accent)', border: 'none', borderRadius: '0.75rem' }}
-            />
+      {/* Unified Table Container (matching User Management format) */}
+      <div className="premium-card" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--card-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ minWidth: 0 }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.15rem' }}>Evaluation Records</h3>
+            <p style={{ fontSize: '0.8rem', color: 'var(--muted-foreground)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Review assessment performance and provide student feedback.</p>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--muted-foreground)' }}>Showing {displayedSubmissions.length} of {filtered.length}</span>
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="btn-secondary"
+              style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', color: 'var(--educator-primary)', fontWeight: 700, whiteSpace: 'nowrap', cursor: 'pointer' }}
+            >
+              {showAll ? 'Minimize' : 'See All'}
+            </button>
           </div>
         </div>
 
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-            <thead style={{ background: 'var(--accent)', fontSize: '0.85rem', color: 'var(--muted-foreground)', textTransform: 'uppercase' }}>
-              <tr>
-                <th style={{ padding: '1rem 1.5rem' }}>Student</th>
-                <th style={{ padding: '1rem 1.5rem' }}>Assessment</th>
-                <th style={{ padding: '1rem 1.5rem' }}>Score</th>
-                <th style={{ padding: '1rem 1.5rem' }}>Status</th>
-                <th style={{ padding: '1rem 1.5rem' }}>Date</th>
-                <th style={{ padding: '1rem 1.5rem', textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((s) => (
-                <tr key={s.id} style={{ borderBottom: '1px solid var(--card-border)' }}>
-                  <td style={{ padding: '1.25rem 1.5rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <div style={{ 
-                        width: '32px', height: '32px', background: 'var(--accent)', borderRadius: '50%', 
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.7rem' 
+        {/* Embedded Controls Bar (Search + Filter Pills + View Switcher) */}
+        <div style={{ padding: '0.65rem 1.25rem', background: '#f8fafc', display: 'flex', gap: '0.85rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+          <div style={{ position: 'relative', flex: '1 1 240px', minWidth: '200px' }}>
+            <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--muted)' }} />
+            <input
+              placeholder="Search by candidate name or assessment title..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '0.75rem 0.75rem 0.75rem 2.75rem',
+                borderRadius: '0.75rem',
+                border: '1px solid #e2e8f0',
+                background: 'white',
+                fontSize: '0.9rem'
+              }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            {/* Status Filter Pills */}
+            <div style={{ display: 'flex', gap: '0.35rem', background: 'white', padding: '0.25rem', borderRadius: '0.75rem', border: '1px solid #e2e8f0' }}>
+              {['all', 'Passed', 'Pending'].map((st) => (
+                <button
+                  key={st}
+                  onClick={() => setStatusFilter(st)}
+                  style={{
+                    padding: '0.3rem 0.65rem',
+                    borderRadius: '0.5rem',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    border: 'none',
+                    background: statusFilter === st ? 'var(--educator-accent)' : 'transparent',
+                    color: statusFilter === st ? 'var(--educator-primary)' : 'var(--muted-foreground)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    textTransform: 'capitalize'
+                  }}
+                >
+                  {st}
+                </button>
+              ))}
+            </div>
+
+            {/* View Mode Switcher */}
+            <div style={{ display: 'flex', background: 'white', padding: '0.25rem', borderRadius: '0.75rem', border: '1px solid #e2e8f0' }}>
+              <button
+                onClick={() => setViewMode('table')}
+                title="Table View"
+                style={{
+                  padding: '0.35rem 0.6rem',
+                  borderRadius: '0.5rem',
+                  background: viewMode === 'table' ? '#f1f5f9' : 'transparent',
+                  color: viewMode === 'table' ? 'var(--educator-primary)' : 'var(--muted-foreground)',
+                  border: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <List size={16} />
+              </button>
+              <button
+                onClick={() => setViewMode('grid')}
+                title="Grid Card View"
+                style={{
+                  padding: '0.35rem 0.6rem',
+                  borderRadius: '0.5rem',
+                  background: viewMode === 'grid' ? '#f1f5f9' : 'transparent',
+                  color: viewMode === 'grid' ? 'var(--educator-primary)' : 'var(--muted-foreground)',
+                  border: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                <LayoutGrid size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ padding: '0 1.5rem 1.5rem', overflowX: 'auto' }}>
+          {filtered.length === 0 ? (
+            <div style={{ padding: '3rem', textAlign: 'center' }}>
+              <Users size={40} style={{ color: 'var(--muted)', marginBottom: '1rem', opacity: 0.3 }} />
+              <p style={{ color: 'var(--muted-foreground)' }}>No evaluation records found matching your query.</p>
+            </div>
+          ) : viewMode === 'table' ? (
+            <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 0.75rem' }}>
+              <thead>
+                <tr style={{ textAlign: 'left', color: 'var(--muted)', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  <th style={{ padding: '0 0.75rem' }}>Student</th>
+                  <th style={{ padding: '0 0.75rem' }}>Assessment</th>
+                  <th style={{ padding: '0 0.75rem' }}>Score</th>
+                  <th style={{ padding: '0 0.75rem' }}>Status</th>
+                  <th style={{ padding: '0 0.75rem' }}>Date</th>
+                  <th style={{ padding: '0 0.75rem', textAlign: 'right' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {displayedSubmissions.map((s) => (
+                  <tr 
+                    key={s.id} 
+                    className="report-row-premium"
+                    style={{ background: '#f8fafc', borderRadius: '0.75rem', transition: 'all 0.2s' }}
+                  >
+                    <td style={{ padding: '1rem 0.75rem', borderRadius: '0.75rem 0 0 0.75rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{ 
+                          width: '36px', height: '36px', background: 'white', border: '1px solid #e2e8f0', borderRadius: '50%', 
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.8rem', color: 'var(--educator-primary)'
+                        }}>
+                          {s.studentName.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{s.studentName}</span>
+                      </div>
+                    </td>
+                    <td style={{ padding: '1rem 0.75rem', fontWeight: 600, fontSize: '0.88rem' }}>{s.assessmentTitle}</td>
+                    <td style={{ padding: '1rem 0.75rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <div style={{ width: '60px', height: '6px', background: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
+                          <div style={{ width: `${s.score}%`, height: '100%', background: s.score >= 70 ? '#10b981' : '#f59e0b' }} />
+                        </div>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>{s.score}%</span>
+                      </div>
+                    </td>
+                    <td style={{ padding: '1rem 0.75rem' }}>
+                      <span style={{ 
+                        padding: '0.25rem 0.65rem', borderRadius: '1rem', fontSize: '0.72rem', fontWeight: 700,
+                        background: 
+                          s.status === 'Passed' ? 'rgba(16, 185, 129, 0.1)' : 
+                          s.status === 'Submitted' ? 'rgba(59, 130, 246, 0.1)' :
+                          'rgba(245, 158, 11, 0.1)',
+                        color: 
+                          s.status === 'Passed' ? '#10b981' : 
+                          s.status === 'Submitted' ? '#3b82f6' :
+                          '#d97706'
                       }}>
+                        {s.status}
+                      </span>
+                    </td>
+                    <td style={{ padding: '1rem 0.75rem', color: 'var(--muted-foreground)', fontSize: '0.8rem' }}>{s.date}</td>
+                    <td style={{ padding: '1rem 0.75rem', borderRadius: '0 0.75rem 0.75rem 0', textAlign: 'right' }}>
+                      <button 
+                        onClick={() => handleEvaluate(s)}
+                        style={{ 
+                          background: 'var(--educator-primary)', color: 'white', padding: '0.45rem 0.85rem', 
+                          borderRadius: '0.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+                          fontSize: '0.8rem', fontWeight: 700, border: 'none', cursor: 'pointer'
+                        }}
+                      >
+                        <Edit3 size={14} />
+                        Evaluate
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            /* Grid Card View */
+            <div style={{ padding: '1rem 0', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
+              {displayedSubmissions.map((s) => (
+                <div key={s.id} className="user-card-item" style={{ padding: '1.1rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '0.75rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                      <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'white', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.8rem', color: 'var(--educator-primary)' }}>
                         {s.studentName.split(' ').map(n => n[0]).join('')}
                       </div>
-                      <span style={{ fontWeight: 600 }}>{s.studentName}</span>
-                    </div>
-                  </td>
-                  <td style={{ padding: '1.25rem 1.5rem' }}>{s.assessmentTitle}</td>
-                  <td style={{ padding: '1.25rem 1.5rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <div style={{ width: '60px', height: '6px', background: 'var(--accent)', borderRadius: '3px', overflow: 'hidden' }}>
-                        <div style={{ width: `${s.score}%`, height: '100%', background: s.score >= 70 ? '#10b981' : '#f59e0b' }} />
+                      <div>
+                        <h3 style={{ fontSize: '0.9rem', fontWeight: 700, margin: 0 }}>{s.studentName}</h3>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--muted)' }}>{s.date}</span>
                       </div>
-                      <span style={{ fontSize: '0.9rem', fontWeight: 700 }}>{s.score}%</span>
                     </div>
-                  </td>
-                  <td style={{ padding: '1.25rem 1.5rem' }}>
                     <span style={{ 
-                      padding: '0.2rem 0.6rem', borderRadius: '1rem', fontSize: '0.75rem', fontWeight: 600,
-                      background: 
-                        s.status === 'Passed' ? 'rgba(16, 185, 129, 0.1)' : 
-                        s.status === 'Submitted' ? 'rgba(59, 130, 246, 0.1)' :
-                        'rgba(245, 158, 11, 0.1)',
-                      color: 
-                        s.status === 'Passed' ? '#10b981' : 
-                        s.status === 'Submitted' ? '#3b82f6' :
-                        '#d97706'
+                      padding: '0.2rem 0.6rem', borderRadius: '1rem', fontSize: '0.7rem', fontWeight: 700,
+                      background: s.status === 'Passed' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+                      color: s.status === 'Passed' ? '#10b981' : '#d97706'
                     }}>
                       {s.status}
                     </span>
-                  </td>
-                  <td style={{ padding: '1.25rem 1.5rem', color: 'var(--muted-foreground)', fontSize: '0.85rem' }}>{s.date}</td>
-                  <td style={{ padding: '1.25rem 1.5rem', textAlign: 'right' }}>
-                    <button 
-                      onClick={() => handleEvaluate(s)}
-                      style={{ 
-                        background: 'var(--primary)', color: 'white', padding: '0.5rem 1rem', 
-                        borderRadius: '0.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
-                        fontSize: '0.8rem', fontWeight: 600
-                      }}
-                    >
-                      <Edit3 size={14} />
-                      Evaluate
-                    </button>
-                  </td>
-                </tr>
+                  </div>
+
+                  <p style={{ fontSize: '0.82rem', fontWeight: 600, color: 'var(--foreground)', marginBottom: '0.75rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {s.assessmentTitle}
+                  </p>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                    <div style={{ flex: 1, height: '6px', background: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
+                      <div style={{ width: `${s.score}%`, height: '100%', background: s.score >= 70 ? '#10b981' : '#f59e0b' }} />
+                    </div>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>{s.score}%</span>
+                  </div>
+
+                  <button 
+                    onClick={() => handleEvaluate(s)}
+                    style={{ 
+                      width: '100%', background: 'var(--educator-primary)', color: 'white', padding: '0.5rem', 
+                      borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem',
+                      fontSize: '0.8rem', fontWeight: 700, border: 'none', cursor: 'pointer'
+                    }}
+                  >
+                    <Edit3 size={14} />
+                    Evaluate Submission
+                  </button>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          )}
         </div>
       </div>
 
@@ -388,7 +567,7 @@ export default function StudentResults() {
                           </div>
                         ) : (
                           <div style={{ fontSize: '0.85rem', background: '#f8fafc', padding: '1rem', borderRadius: '0.75rem' }}>
-                            <p style={{ fontSize: '0.75rem', color: 'var(--muted-foreground)', marginBottom: '0.25rem' }}>Student's Answer:</p>
+                            <p style={{ fontSize: '0.75rem', color: 'var(--muted-foreground)', marginBottom: '0.25rem' }}>Student&apos;s Answer:</p>
                             <p style={{ fontWeight: 600, whiteSpace: 'pre-wrap' }}>{studentAnswer || <span style={{ fontStyle: 'italic', color: '#94a3b8' }}>No answer provided</span>}</p>
                           </div>
                         )}
